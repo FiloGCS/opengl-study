@@ -158,6 +158,8 @@
     <None Include="Shaders\05_textureMix.vert" />
     <None Include="Shaders\06_usingTransform.frag" />
     <None Include="Shaders\06_usingTransform.vert" />
+    <None Include="Shaders\07_usingProjection.frag" />
+    <None Include="Shaders\07_usingProjection.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg" />

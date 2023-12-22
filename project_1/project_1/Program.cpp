@@ -145,7 +145,7 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, texture2.ID);
 
 	///SHADER
-	Shader myShader("06_usingTransform");
+	Shader myShader("07_usingProjection");
 	myShader.use();
 	//Assign the TextureUnits to the according shader uniforms
 	myShader.setInt("u_texture1", 0);
@@ -179,12 +179,16 @@ int main() {
 
 		//Scaling and rotating in realtime
 
-		glm::mat4 trans = glm::mat4(1.0f);
-		float t = glfwGetTime();
-		trans = glm::translate(trans, glm::vec3(0, glm::sin(t) * 0.25f, 0));
-		trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
-		trans = glm::rotate(trans, glm::radians(t * 90.0f), glm::vec3(0.0, 0.0, 1.0));
-		myShader.setMat4("transform", trans);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, -0.5f, -3.0f));
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600, 0.1f, 100.0f);
+
+		myShader.setMat4("model", model);
+		myShader.setMat4("view", view);
+		myShader.setMat4("projection", projection);
 
 
 		glBindVertexArray(VAO);

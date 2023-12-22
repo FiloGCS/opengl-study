@@ -82,6 +82,12 @@
     <None Include="Shaders\06_usingTransform.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\07_usingProjection.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\07_usingProjection.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg">
