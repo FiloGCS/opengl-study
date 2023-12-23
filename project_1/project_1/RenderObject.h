@@ -14,6 +14,8 @@
 
 class RenderObject {
 
+public:
+	void Render(glm::mat4 projection, glm::mat4 view);
 
 };
 

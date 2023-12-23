@@ -200,20 +200,6 @@ int main() {
 	myShader.setInt("u_texture2", 1);
 
 
-
-
-	///MATRIX TESTING
-
-	//Translation transformation
-	//glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-	//glm::mat4 trans(1.0f);
-	//trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-	//vec = trans * vec;
-	//std::cout << vec.x << vec.y << vec.z << std::endl;
-
-
-
-
 	glEnable(GL_DEPTH_TEST);
 
 
@@ -227,6 +213,7 @@ int main() {
 
 		//Scaling and rotating in realtime
 
+		///MATRIX TRANSFORMATIONS
 		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
