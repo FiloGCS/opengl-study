@@ -77,11 +77,7 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 }
 
 void RenderObject::Update(double time) {
-	std::cout << time << std::endl;
-
-	position.y = glm::sin(time) * 0.25f;
 	setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));
-
 }
 
 void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
