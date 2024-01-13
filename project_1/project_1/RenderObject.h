@@ -24,7 +24,6 @@ public:
 	glm::vec3 scale;
 	unsigned int VAO;
 	unsigned int VBO;
-	unsigned int BoxVBO;
 	Shader shader;
 
 	RenderObject();

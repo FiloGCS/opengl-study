@@ -16,11 +16,13 @@
 //My includes
 #include "Shader.h"
 #include "Texture2D.h"
+#include "RenderObject.h"
 //stb_image library handles image loading
 //This needs to be last since we're #including stb_image.h in previous includes
 // and we can only implement it once!
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -28,8 +30,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 int main() {
 
-	///GLFW and GLAD init
-#pragma region Initialization
+#pragma region GLFW_and_GLAD_Initialization
 
 	glfwInit();
 	//With these functions we configure glfw.
@@ -62,155 +63,30 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 #pragma endregion
 
-	///VIEWPORT
-	// 1 and 2 set the origin position
+	//Create a viewport
 	glViewport(0, 0, 800, 600);
 
-	///MESH
-#pragma region Mesh Definition
-	// Generate a vertex array object (VAO)
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	//Create a cube object
+	RenderObject myCube = RenderObject();
 
-	// Mesh Data
-	// Adding the vertices and indices of our triangle to a VBO and EBO
-	float boxVertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	// Generate a vertex buffer object (VBO)
-	// glBufferData is a function specifically targeted to copy user-defined data into the currently bound buffer.
-	//	We copy the previously defined vertex data into the GL_ARRAY_BUFFER buffer's memory
-	//	The fourth parameter specifies how we want the graphics card to manage the given data. This can take 3 forms:
-	//		GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times
-	//		GL_STATIC_DRAW: the data is set only once and used many times.
-	//		GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
-	//	This is going to affect where the GPU will place the data and affect optimization.
-	
-	unsigned int BoxVBO;
-	glGenBuffers(1, &BoxVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, BoxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
-
-
-	//We need to tell OpenGL how it should interpret our vertex data.
-	// Parameter Breakdown:
-	// 1. Which vertex attribute we want to configure (in this case we specified location = 0 in the shader).
-	// 2. Size of the vertex attribute (vec3 in this case, so 3 values).
-	// 3. Type of data (vec3 are made of floats).
-	// 4. Specifies if we want the data to be normalized.
-	// 5. "Stride", the space between consecutive vertex attributes. (if the values are tightly packed, 0 also works)
-	// 6. of type void*, this is the offset of where the position data begins in the buffer.
-	// In this case: we're setting attribute of size 3 floats, without normalizing, tightly packed
-	//We filled the info but we need to enable it so it's actually taken into account
-
-	//Position Attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	//Color Attribute
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);
-	//UV Attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-#pragma endregion
-
-	///TEXTURES
-	//From now on all textures will be loaded flipped vertically
-	stbi_set_flip_vertically_on_load(true);
-	//Texture 1
-	Texture2D texture1("Textures/T_UV_04.jpg");
-	//Texture 2
-	Texture2D texture2("Textures/T_Noise_03a.png");
-	//Bind texture 1 in the TextureUnit0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1.ID);
-	//Bind texture 2 in the TextureUnit1
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2.ID);
-
-	///SHADER
-	Shader myShader("07_usingProjection");
-	myShader.use();
-	//Assign the TextureUnits to the according shader uniforms
-	myShader.setInt("u_texture1", 0);
-	myShader.setInt("u_texture2", 1);
-
-
+	//Enable depth Test
 	glEnable(GL_DEPTH_TEST);
 
-
-
-	///LOOP
+	///RENDER LOOP
 	//The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed to close.
 	while (!glfwWindowShouldClose(window)) {
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Scaling and rotating in realtime
-
 		///MATRIX TRANSFORMATIONS
-		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600, 0.1f, 100.0f);
 
-		myShader.setMat4("model", model);
-		myShader.setMat4("view", view);
-		myShader.setMat4("projection", projection);
-
-
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//Render RenderObjects
+		myCube.Render(projection, view);
 
 		glfwSwapBuffers(window);
 		//The glfwPollEvents function checks if any events are triggered

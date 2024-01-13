@@ -3,6 +3,11 @@ constexpr char DEFAULT_SHADER[] = "07_usingProjection";
 #include "RenderObject.h"
 
 RenderObject::RenderObject() : shader(DEFAULT_SHADER){
+	//Default transform values
+	position = glm::vec3(0, 0, 0);
+	scale = glm::vec3(1, 1, 1);
+	rotation = glm::vec3(0, 0, 0);
+
 	//VAO
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -50,8 +55,8 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
-	glGenBuffers(1, &BoxVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, BoxVBO);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
 	//AttribPointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -72,12 +77,14 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 
 void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
     shader.use();
+	shader.setInt("u_texture1", 0);
+	shader.setInt("u_texture2", 1);
     shader.setMat4("model", getModelMatrix());
     shader.setMat4("view", view);
     shader.setMat4("projection", projection);
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 10); //TODO set the correct values
+    glDrawArrays(GL_TRIANGLES, 0, 36); //TODO set the correct values
 
 }
 
@@ -87,4 +94,5 @@ glm::mat4 RenderObject::getModelMatrix(){
     m = glm::scale(m, scale);
     m = glm::translate(m, position);
     return m;
+
 }
