@@ -75,6 +75,11 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 	//Already managed via the initializer list
 }
 
+void RenderObject::Update(double time) {
+	std::cout << time << std::endl;
+
+}
+
 void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
     shader.use();
 	shader.setInt("u_texture1", 0);
