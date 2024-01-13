@@ -75,13 +75,6 @@ int main() {
 
 	// Mesh Data
 	// Adding the vertices and indices of our triangle to a VBO and EBO
-	float vertices[] = {
-		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-	};
 	float boxVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -125,10 +118,6 @@ int main() {
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
-	unsigned int indices[] = {
-		0,1,3,
-		1,2,3
-	};
 
 	// Generate a vertex buffer object (VBO)
 	// glBufferData is a function specifically targeted to copy user-defined data into the currently bound buffer.
@@ -138,22 +127,12 @@ int main() {
 	//		GL_STATIC_DRAW: the data is set only once and used many times.
 	//		GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
 	//	This is going to affect where the GPU will place the data and affect optimization.
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+	
 	unsigned int BoxVBO;
 	glGenBuffers(1, &BoxVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, BoxVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
 
-	// Generate an element buffer object (EBO)
-	// Bind it as the current ELEMENT_ARRAY_BUFFER and fill it up
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//We need to tell OpenGL how it should interpret our vertex data.
 	// Parameter Breakdown:
@@ -230,7 +209,7 @@ int main() {
 		//glBindVertexArray(VAO);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		glBindVertexArray(BoxVBO);
+		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
