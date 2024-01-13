@@ -6,7 +6,7 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
-	rotation = glm::vec3(0, 0, 0);
+	rotation = glm::quat();
 
 	//VAO
     glGenVertexArrays(1, &VAO);
@@ -73,10 +73,14 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 	glBindTexture(GL_TEXTURE_2D, texture2.ID);
 	//Shader
 	//Already managed via the initializer list
+
 }
 
 void RenderObject::Update(double time) {
 	std::cout << time << std::endl;
+
+	position.y = glm::sin(time) * 0.25f;
+	setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));
 
 }
 
@@ -95,9 +99,26 @@ void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
 
 glm::mat4 RenderObject::getModelMatrix(){
     glm::mat4 m = glm::mat4(1.0f);
-    //m = glm::rotate(m, )
+	m = glm::translate(m, position);
+	m = m * glm::mat4_cast(rotation);
     m = glm::scale(m, scale);
-    m = glm::translate(m, position);
     return m;
-
 }
+
+void RenderObject::setRotation(const glm::vec3& eulerAngles){
+	rotation = glm::quat(eulerAngles);
+}
+
+void RenderObject::setRotation(const glm::quat& quaternion){
+	rotation = quaternion;
+}
+
+void RenderObject::setPosition(const glm::vec3& position){
+	this->position = position;
+}
+
+void RenderObject::setScale(const glm::vec3& scale){
+	this->scale = scale;
+}
+
+

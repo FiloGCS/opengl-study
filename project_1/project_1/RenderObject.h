@@ -20,7 +20,7 @@ class RenderObject {
 public:
 
 	glm::vec3 position;
-	glm::vec3 rotation;
+	glm::quat rotation;
 	glm::vec3 scale;
 	unsigned int VAO;
 	unsigned int VBO;
@@ -30,6 +30,12 @@ public:
 	void Update(double time);
 	void Render(glm::mat4 projection, glm::mat4 view);
 	glm::mat4 getModelMatrix();
+
+	void setRotation(const glm::vec3& eulerAngles);
+	void setRotation(const glm::quat& quaternion);
+	void setPosition(const glm::vec3& position);
+	void setScale(const glm::vec3& scale);
+
 
 };
 
