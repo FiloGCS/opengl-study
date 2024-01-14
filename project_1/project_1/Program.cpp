@@ -23,14 +23,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+constexpr glm::vec3 CLEAR_COLOR = glm::vec3(0.15, 0.16, 0.13);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
 int main() {
-
-#pragma region GLFW_and_GLAD_Initialization
 
 	glfwInit();
 	//With these functions we configure glfw.
@@ -61,7 +60,6 @@ int main() {
 
 	//We can register a callback function on the window that gets called each time the window is resized.
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-#pragma endregion
 
 	//Create a viewport
 	glViewport(0, 0, 800, 600);
@@ -74,9 +72,9 @@ int main() {
 
 	///RENDER LOOP
 	//The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed to close.
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)){
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		///MATRIX TRANSFORMATIONS

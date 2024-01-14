@@ -1,7 +1,7 @@
 constexpr char DEFAULT_SHADER[] = "07_usingProjection";
 
 #include "RenderObject.h"
-
+//TODO - Do we need a destructor
 Entity::Entity() : shader(DEFAULT_SHADER){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
