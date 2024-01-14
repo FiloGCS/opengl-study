@@ -2,7 +2,7 @@ constexpr char DEFAULT_SHADER[] = "07_usingProjection";
 
 #include "RenderObject.h"
 
-RenderObject::RenderObject() : shader(DEFAULT_SHADER){
+Entity::Entity() : shader(DEFAULT_SHADER){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
@@ -76,11 +76,11 @@ RenderObject::RenderObject() : shader(DEFAULT_SHADER){
 
 }
 
-void RenderObject::Update(double time) {
+void Entity::Update(double time) {
 	setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));
 }
 
-void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
+void Entity::Render(glm::mat4 projection, glm::mat4 view){
     shader.use();
 	shader.setInt("u_texture1", 0);
 	shader.setInt("u_texture2", 1);
@@ -93,7 +93,7 @@ void RenderObject::Render(glm::mat4 projection, glm::mat4 view){
 
 }
 
-glm::mat4 RenderObject::getModelMatrix(){
+glm::mat4 Entity::getModelMatrix(){
     glm::mat4 m = glm::mat4(1.0f);
 	m = glm::translate(m, position);
 	m = m * glm::mat4_cast(rotation);
@@ -101,19 +101,19 @@ glm::mat4 RenderObject::getModelMatrix(){
     return m;
 }
 
-void RenderObject::setRotation(const glm::vec3& eulerAngles){
+void Entity::setRotation(const glm::vec3& eulerAngles){
 	rotation = glm::quat(eulerAngles);
 }
 
-void RenderObject::setRotation(const glm::quat& quaternion){
+void Entity::setRotation(const glm::quat& quaternion){
 	rotation = quaternion;
 }
 
-void RenderObject::setPosition(const glm::vec3& position){
+void Entity::setPosition(const glm::vec3& position){
 	this->position = position;
 }
 
-void RenderObject::setScale(const glm::vec3& scale){
+void Entity::setScale(const glm::vec3& scale){
 	this->scale = scale;
 }
 

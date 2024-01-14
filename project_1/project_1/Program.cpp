@@ -67,7 +67,7 @@ int main() {
 	glViewport(0, 0, 800, 600);
 
 	//Create a cube object
-	RenderObject myCube = RenderObject();
+	Entity myCube = Entity();
 
 	//Enable depth Test
 	glEnable(GL_DEPTH_TEST);

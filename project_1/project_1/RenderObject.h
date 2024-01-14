@@ -15,7 +15,7 @@
 #include "Shader.h"
 #include "Texture2D.h"
 
-class RenderObject {
+class Entity {
 
 public:
 
@@ -26,7 +26,7 @@ public:
 	unsigned int VBO;
 	Shader shader;
 
-	RenderObject();
+	Entity();
 	void Update(double time);
 	void Render(glm::mat4 projection, glm::mat4 view);
 	glm::mat4 getModelMatrix();
