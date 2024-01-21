@@ -1,11 +1,5 @@
-//Following this course: https://learnopengl.com/Getting-started/Hello-Window
-
-//How to hide the console in Visual Studio
-// Properties->Linker->System->SubSystem (set it to Windows)
-// Properties->Linker->Advanced->Entry Point (set it to mainCRTStartup)
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-
 #include <iostream>
+#include <vector>
 //GLFW for window control and glad for OpenGL functions
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -42,7 +36,7 @@ int main() {
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//Create a window with GLFW
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Program", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -60,15 +54,21 @@ int main() {
 
 	//We can register a callback function on the window that gets called each time the window is resized.
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+	 
 	//Create a viewport
 	glViewport(0, 0, 800, 600);
-
-	//Create a cube object
-	Entity myCube = Entity();
-
 	//Enable depth Test
 	glEnable(GL_DEPTH_TEST);
+
+	std::vector<Entity> entities;
+	
+	int n = 1; // Or however many Entities you want
+	entities.reserve(n); // Reserve memory for n entities (optional for performance)
+	for (int i = 0; i < n; ++i) {
+		entities.emplace_back(); // Constructs a new Entity in place
+	}
+	//Create a cube object
+	Entity myCube = Entity();
 
 	///RENDER LOOP
 	//The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed to close.
@@ -83,10 +83,13 @@ int main() {
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600, 0.1f, 100.0f);
 	
-		//Update Objects
-		myCube.Update(glfwGetTime());
-		//Render RenderObjects
-		myCube.Render(projection, view);
+		//Update and render Objects
+		for (Entity& entity : entities) {
+			entity.Update(glfwGetTime());
+			for (int i = 0; i < 1000; i++) {
+				entity.Render(projection, view); // Call the Render method on each Entity
+			}
+		}
 
 		glfwSwapBuffers(window);
 		//The glfwPollEvents function checks if any events are triggered

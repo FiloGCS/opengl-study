@@ -9,8 +9,8 @@ Entity::Entity() : shader(DEFAULT_SHADER){
 	rotation = glm::quat();
 
 	//VAO
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 	//VBO
 	float boxVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -66,39 +66,40 @@ Entity::Entity() : shader(DEFAULT_SHADER){
 	//Textures
 	stbi_set_flip_vertically_on_load(true);
 	Texture2D texture1("Textures/T_UV_04.jpg");
-	Texture2D texture2("Textures/T_Noise_03a.png");
+	//Texture2D texture2("Textures/T_Noise_03a.png");
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1.ID);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2.ID);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, texture2.ID);
 	//Shader
 	//Already managed via the initializer list
 
 }
 
 void Entity::Update(double time) {
-	setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));
+	/*setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));*/
+	setRotation(glm::vec3(glm::radians(time * 5.0f), glm::radians(time * 7.0f), glm::radians(time * 11.0f)));
 }
 
 void Entity::Render(glm::mat4 projection, glm::mat4 view){
-    shader.use();
+	shader.use();
 	shader.setInt("u_texture1", 0);
 	shader.setInt("u_texture2", 1);
-    shader.setMat4("model", getModelMatrix());
-    shader.setMat4("view", view);
-    shader.setMat4("projection", projection);
+	shader.setMat4("model", getModelMatrix());
+	shader.setMat4("view", view);
+	shader.setMat4("projection", projection);
 
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36); //TODO set the correct values
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36); //TODO set the correct values
 
 }
 
 glm::mat4 Entity::getModelMatrix(){
-    glm::mat4 m = glm::mat4(1.0f);
+	glm::mat4 m = glm::mat4(1.0f);
 	m = glm::translate(m, position);
 	m = m * glm::mat4_cast(rotation);
-    m = glm::scale(m, scale);
-    return m;
+	m = glm::scale(m, scale);
+	return m;
 }
 
 void Entity::setRotation(const glm::vec3& eulerAngles){
