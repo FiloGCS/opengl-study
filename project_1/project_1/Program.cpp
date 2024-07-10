@@ -77,7 +77,7 @@ int main() {
 		glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		///MATRIX TRANSFORMATIONS
+		//MATRIX TRANSFORMATIONS
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		glm::mat4 projection;
@@ -99,7 +99,7 @@ int main() {
 		glfwPollEvents();
 	}
 
-	///TERMINATION
+	//TERMINATION
 	//As soon as we exit the render loop we properly clean/delete all of GLFW's resources.
 	glfwTerminate();
 	return 0;

@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\git\filo\opengl-study\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\git\filo\opengl-study\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Filo\git\filo\opengl-study\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>C:\Users\Filo\git\filo\opengl-study\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,13 +135,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Downloads\glad\src\glad.c" />
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />

@@ -24,9 +24,6 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Downloads\glad\src\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,6 +31,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RenderObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
