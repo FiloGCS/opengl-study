@@ -7,6 +7,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+//imgui to handle Debug GUI
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 //My includes
 #include "Shader.h"
 #include "Texture2D.h"
@@ -24,7 +28,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 int main() {
-
+	//-----INIT GLFW
 	glfwInit();
 	//With these functions we configure glfw.
 	// The first attribute tells what option we want to configure
@@ -45,6 +49,20 @@ int main() {
 	//Make the context of our window the main context on the current thread
 	glfwMakeContextCurrent(window);
 
+	//-----INIT imgui
+	//Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	//Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init();
+
+
+	//-----INIT GLAD
 	//GLAD manages function pointers for OpenGL, so we initialize GLAD before calling any OpenGL function
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -74,6 +92,22 @@ int main() {
 	//The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed to close.
 	while (!glfwWindowShouldClose(window)){
 
+		//The glfwPollEvents function checks if any events are triggered
+		// (like keyboard input or mouse movement events),
+		// updates the window state, and calls the corresponding functions 
+		// (which we can register via callback methods).
+		glfwPollEvents();
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow(); // Show demo window! :)
+
+		//GAME LOOP GOES HERE
+		//...
+		//...
+
 		glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -82,7 +116,7 @@ int main() {
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600, 0.1f, 100.0f);
-	
+
 		//Update and render Objects
 		for (Entity& entity : entities) {
 			entity.Update(glfwGetTime());
@@ -91,16 +125,21 @@ int main() {
 			}
 		}
 
+
+		//Render ImGui
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(window);
-		//The glfwPollEvents function checks if any events are triggered
-		// (like keyboard input or mouse movement events),
-		// updates the window state, and calls the corresponding functions 
-		// (which we can register via callback methods).
-		glfwPollEvents();
+
 	}
 
 	//TERMINATION
 	//As soon as we exit the render loop we properly clean/delete all of GLFW's resources.
 	glfwTerminate();
+	//Shutdown imgui
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	return 0;
 }
