@@ -1,8 +1,9 @@
-constexpr char DEFAULT_SHADER[] = "07_usingProjection";
+constexpr char DEFAULT_SHADER_PATH[] = "07_usingProjection";
+constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
 
-#include "RenderObject.h"
+#include "Entity.h"
 //TODO - Do we need a destructor
-Entity::Entity() : shader(DEFAULT_SHADER){
+Entity::Entity() : shader(DEFAULT_SHADER_PATH){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
@@ -13,6 +14,7 @@ Entity::Entity() : shader(DEFAULT_SHADER){
 	glBindVertexArray(VAO);
 	//VBO
 	float boxVertices[] = {
+	// X, Y, Z, U, V
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -65,7 +67,7 @@ Entity::Entity() : shader(DEFAULT_SHADER){
 	glEnableVertexAttribArray(2);
 	//Textures
 	stbi_set_flip_vertically_on_load(true);
-	Texture2D texture1("Textures/T_UV_04.jpg");
+	Texture2D texture1(DEFAULT_TEXTURE_PATH);
 	//Texture2D texture2("Textures/T_Noise_03a.png");
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1.ID);
@@ -73,7 +75,6 @@ Entity::Entity() : shader(DEFAULT_SHADER){
 	//glBindTexture(GL_TEXTURE_2D, texture2.ID);
 	//Shader
 	//Already managed via the initializer list
-
 }
 
 void Entity::Update(double time) {

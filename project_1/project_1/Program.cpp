@@ -10,7 +10,7 @@
 //My includes
 #include "Shader.h"
 #include "Texture2D.h"
-#include "RenderObject.h"
+#include "Entity.h"
 //stb_image library handles image loading
 //This needs to be last since we're #including stb_image.h in previous includes
 // and we can only implement it once!

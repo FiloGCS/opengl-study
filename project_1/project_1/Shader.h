@@ -25,9 +25,9 @@ public:
 	// the shader program OpenGL ID
 	unsigned int ID;
 
-	// Generates the shader program from two shader paths
+	// This constructor generates the shader program from two shader paths
 	Shader(const char* vertexPath, const char* fragmentPath);
-	// Assumes that both shaders are in "Shaders/" with the same name
+	// This constructor assumes that both shaders are in "Shaders/" with the same name
 	Shader(std::string shaderName);
 	void use();
 	void setBool(const std::string& name, bool value) const;
