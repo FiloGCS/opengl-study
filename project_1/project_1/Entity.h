@@ -36,6 +36,8 @@ public:
 	void setPosition(const glm::vec3& position);
 	void setScale(const glm::vec3& scale);
 
+	void setShader(Shader newShader);
+
 
 };
 

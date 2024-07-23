@@ -119,4 +119,9 @@ void Entity::setScale(const glm::vec3& scale){
 	this->scale = scale;
 }
 
+void Entity::setShader(Shader newShader) {
+	//TODO do I need to cleanup the previous one here?
+	shader = std::move(newShader);
+}
+
 
