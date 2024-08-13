@@ -63,9 +63,6 @@
     <ClCompile Include="..\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -125,6 +122,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="Shaders\07_usingProjection.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="101_XorAttenuation.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="101_XorAttenuation.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

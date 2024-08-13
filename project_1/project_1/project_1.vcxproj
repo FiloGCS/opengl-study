@@ -142,7 +142,6 @@
     <ClCompile Include="..\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -158,6 +157,8 @@
     <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="101_XorAttenuation.frag" />
+    <None Include="101_XorAttenuation.vert" />
     <None Include="Shaders\02_vertexcolor.frag" />
     <None Include="Shaders\01_basic.frag" />
     <None Include="Shaders\01_basic.vert" />
