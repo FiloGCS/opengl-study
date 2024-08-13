@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 //GLFW for window control and glad for OpenGL functions
 #include <glad/glad.h>
@@ -37,7 +37,7 @@ bool firstMouse = true;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui windows
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
-void drawImGuiWindow_stats(GLFWwindow* window);
+void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
 
 //Main
 int main() {
@@ -110,7 +110,6 @@ int main() {
 			ImGui::ShowDemoWindow(&show_demo_window);
 		}
 		//drawImGuiWindow_settings(window, show_demo_window);
-		drawImGuiWindow_stats(window);
 
 		//Clear buffer before starting rendering
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
@@ -118,14 +117,32 @@ int main() {
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
-		//Update and render each entity in the scene
+		//Update each entity in the scene
 		for (Entity& entity : entities) {
 			entity.Update(glfwGetTime());
+		}
+
+		//Preparing OpenGL Query to measure render time
+		GLuint queryID;
+		glGenQueries(1, &queryID);
+
+		//Render each entity in the scene, measuring with OpenGL queries
+		glBeginQuery(GL_TIME_ELAPSED, queryID);
+		for (Entity& entity : entities) {
 			entity.Render(projection, view);
 		}
+		glEndQuery(GL_TIME_ELAPSED);
+		GLuint64 elapsedTime;
+		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
+		// Convert nanoseconds to microseconds
+		float microseconds = elapsedTime / 1000.0f;
+		//Show the result in the imGui window
+		drawImGuiWindow_stats(window, microseconds);
+		// Don't forget to delete the query object when you're done
+		glDeleteQueries(1, &queryID);
 
 		//Render ImGui windows on top of the scene
 		ImGui::Render();
@@ -166,8 +183,10 @@ void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
 	ImGui::ColorEdit3("clear color", (float*)&clear_color);
 	ImGui::End();
 }
-void drawImGuiWindow_stats(GLFWwindow* window) {
+void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
 	ImGui::Begin("Stats");
-	ImGui::Text("No Stats to show");
+	std::ostringstream oss;
+	oss << "Render time: " << rendertime << "us";
+	ImGui::Text(oss.str().c_str());
 	ImGui::End();
 }

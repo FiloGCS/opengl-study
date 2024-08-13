@@ -124,10 +124,10 @@
     <None Include="Shaders\07_usingProjection.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="101_XorAttenuation.frag">
+    <None Include="Shaders\101_Xor.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="101_XorAttenuation.vert">
+    <None Include="Shaders\101_Xor.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

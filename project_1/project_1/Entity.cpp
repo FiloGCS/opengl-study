@@ -1,4 +1,5 @@
-constexpr char DEFAULT_SHADER_PATH[] = "07_usingProjection";
+constexpr char DEFAULT_SHADER_PATH[] = "101_Xor";
+//constexpr char DEFAULT_SHADER_PATH[] = "101_XorAttenuation";
 constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
 
 #include "Entity.h"
