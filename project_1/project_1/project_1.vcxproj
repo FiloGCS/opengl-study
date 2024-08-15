@@ -145,6 +145,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture2D.cpp" />
@@ -152,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture2D.h" />
@@ -176,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg" />
+    <Image Include="Textures\T_UV_03.png" />
     <Image Include="Textures\T_UV_04.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

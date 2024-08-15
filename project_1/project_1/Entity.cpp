@@ -1,4 +1,4 @@
-constexpr char DEFAULT_SHADER_PATH[] = "101_Xor";
+constexpr char DEFAULT_SHADER_PATH[] = "07_usingProjection";
 //constexpr char DEFAULT_SHADER_PATH[] = "101_XorAttenuation";
 constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
 
@@ -124,5 +124,6 @@ void Entity::setShader(Shader newShader) {
 	//TODO do I need to cleanup the previous one here?
 	shader = std::move(newShader);
 }
+
 
 

@@ -20,6 +20,7 @@
 // and we can only implement it once!
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "Model.h"
 
 //Global variables
 //Window
@@ -84,12 +85,18 @@ int main() {
 
 	//The list of entities in our scene
 	std::vector<Entity> entities;
+
 	//DEBUG - Populate with chad cubes
-	int n = 1; // Or however many Entities you want
+	int n = 0; // Or however many Entities you want
 	entities.reserve(n);
 	for (int i = 0; i < n; ++i) {
 		entities.emplace_back();
 	}
+
+	//Using the model from the tutorial
+	char path[] = "Models/backpack/backpack.obj";
+	Model m1 = Model(path);
+	Shader shader1 = Shader("07_usingProjection");
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)){
@@ -117,7 +124,7 @@ int main() {
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
 		//Update each entity in the scene
@@ -134,6 +141,15 @@ int main() {
 		for (Entity& entity : entities) {
 			entity.Render(projection, view);
 		}
+		
+
+
+		shader1.setMat4("view", view);
+		shader1.setMat4("projection", projection);
+		m1.Draw(shader1);
+
+
+
 		glEndQuery(GL_TIME_ELAPSED);
 		GLuint64 elapsedTime;
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
