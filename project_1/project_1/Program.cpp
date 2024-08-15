@@ -93,10 +93,12 @@ int main() {
 		entities.emplace_back();
 	}
 
+	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+	stbi_set_flip_vertically_on_load(true);
 	//Using the model from the tutorial
 	char path[] = "Models/backpack/backpack.obj";
 	Model m1 = Model(path);
-	Shader shader1 = Shader("07_usingProjection");
+	Shader ourShader = Shader("07_usingProjection");
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)){
@@ -124,7 +126,7 @@ int main() {
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -7.0f));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
 		//Update each entity in the scene
@@ -141,12 +143,24 @@ int main() {
 		for (Entity& entity : entities) {
 			entity.Render(projection, view);
 		}
-		
 
+		//TODO trying to make this work... T_T
+		ourShader.use();
 
-		shader1.setMat4("view", view);
-		shader1.setMat4("projection", projection);
-		m1.Draw(shader1);
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
+		glm::mat4 model = glm::mat4(1.0f);
+		//translation
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		//scale
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		//rotation
+		float time = glfwGetTime();
+		glm::vec3 rotSpeed = glm::vec3(0.0f, 25.0f, 0.0f);
+		glm::quat rotation = glm::quat(glm::vec3(glm::radians(time * rotSpeed.x), glm::radians(time * rotSpeed.y), glm::radians(time * rotSpeed.z)));
+		model = model * glm::mat4_cast(rotation);
+		ourShader.setMat4("model", model);
+		m1.Draw(ourShader);
 
 
 
