@@ -1,4 +1,7 @@
 #version 330 core
+//Built in GLSL variables for fragment shaders
+// https://www.khronos.org/opengl/wiki/Built-in_Variable_(GLSL) MIND THE LAST ")"
+//in vec4 gl_FragCoord; - Screen space coordinates
 
 in vec3 vertexColor;
 in vec2 texCoord;
@@ -8,12 +11,15 @@ in vec3 position;
 
 uniform sampler2D u_texture1;
 uniform sampler2D u_texture2;
+//Engine
+uniform vec2 resolution;
+uniform float time;
 //Lighting
+//TODO - Change this to use unform arrays?
 uniform vec3 ambient_color;
 uniform vec3 point1_position;
 uniform vec3 point1_color;
 uniform float point1_falloff;
-uniform float time;
 
 out vec4 FragColor;
 
@@ -38,4 +44,6 @@ void main(){
 
 	//FragColor = texture(u_texture1, texCoord) * vec4(point1,1);
 	FragColor = vec4(1,1,1,1) * lights;
+
+	//FragColor = vec4(gl_FragCoord.x/resolution.x,gl_FragCoord.y/resolution.y,0,1);
 }

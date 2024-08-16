@@ -1,5 +1,8 @@
 PENDING
-
+	Use some kind of default texture?
+		I need to check how textures are working in detail
+	Improve model loading, textures, materials...
+	Set multiple objects in a scene, or a scene, in general...
 BUGS
 
 WISHLIST

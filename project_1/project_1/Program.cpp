@@ -93,7 +93,30 @@ int main() {
 
 	//HERE WE GO!-----------------------
 	glViewport(0, 0, window_width, window_height);
+
+	//STENCIL BUFFER
+	//glEnable(GL_STENCIL_TEST);
+	//glDisable(GL_STENCIL_TEST);
+	glStencilMask(0xFF); // each bit is written to the stencil buffer as is
+	//glStencilMask(0x00); // each bit ends up as 0 in the stencil buffer (disabling writes)
+	//glStencilFunc describes the test
+	//If stencil value of a fragment is equal to ref value of 0, passes test and is drawn:
+	glStencilFunc(GL_EQUAL, 0, 0xFF);
+	//glStencilOp describes what actions to take
+	//in order:
+	//sfail: action to take if the stencil test fails.
+	//dpfail : action to take if the stencil test passes, but the depth test fails.
+	//dppass : action to take if both the stencil and the depth test pass.
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	//DEPTH BUFFER
 	glEnable(GL_DEPTH_TEST);
+	//This is the Depth testing functions
+	//it passes if fragment depth is "GL_LESS" than the buffer
+	//Other functions: GL_ALWAYS, GL_NEVER, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL
+	glDepthFunc(GL_LESS);	
+	//this can be used to temporarily disable WRITING while still testing
+	//glDepthMask(GL_FALSE);
 
 	//The list of entities in our scene
 	std::vector<Entity> entities;
@@ -133,9 +156,9 @@ int main() {
 		}
 		//drawImGuiWindow_settings(window, show_demo_window);
 
-		//Clear buffer before starting rendering
+		//Clear buffers before starting rendering
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
@@ -160,6 +183,7 @@ int main() {
 		//TODO trying to make this work... T_T
 		ourShader.use();
 		//Engine uniforms
+		ourShader.setVector2("resolution", window_width, window_height);
 		ourShader.setFloat("time", glfwGetTime());
 		drawImGuiWindow_lighting(window, ambient_color, point1_color, point1_falloff);
 		//Lighting uniforms
