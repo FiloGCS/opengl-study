@@ -175,6 +175,8 @@
     <None Include="Shaders\07_usingProjection.vert" />
     <None Include="Shaders\101_Xor.frag" />
     <None Include="Shaders\101_Xor.vert" />
+    <None Include="Shaders\default.frag" />
+    <None Include="Shaders\default.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg" />

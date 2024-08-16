@@ -17,17 +17,22 @@ public:
 		loadModel(path);
 	}
 	void Draw(Shader &shader);
-private:
+
 	//model data
 	vector<Mesh> meshes;
 	string directory;
 	vector<Texture> textures_loaded;
 
+	//Model information functions
+	unsigned int getVertexCount();
+	unsigned int getMeshCount();
+private:
+
 	void loadModel(string path);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 	vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
-
+	
 
 };
 

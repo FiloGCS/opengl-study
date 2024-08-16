@@ -113,6 +113,20 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
 	return textures;
 }
 
+unsigned int Model::getVertexCount()
+{
+	unsigned int count = 0;
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		count += meshes[0].vertices.size();
+	}
+	return count;
+}
+
+unsigned int Model::getMeshCount()
+{
+	return meshes.size();
+}
+
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
 {
 	string filename = string(path);

@@ -136,6 +136,12 @@
     <None Include="Shaders\101_Xor.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\default.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\default.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg">

@@ -95,10 +95,11 @@ int main() {
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
-	//Using the model from the tutorial
+	//Using the model from the 
+	//char path[] = "Models/suzanne/suzanne.obj";
 	char path[] = "Models/backpack/backpack.obj";
 	Model m1 = Model(path);
-	Shader ourShader = Shader("07_usingProjection");
+	Shader ourShader = Shader("default");
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)){
@@ -146,6 +147,7 @@ int main() {
 
 		//TODO trying to make this work... T_T
 		ourShader.use();
+		ourShader.setFloat("time", glfwGetTime());
 
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
@@ -162,6 +164,14 @@ int main() {
 		ourShader.setMat4("model", model);
 		m1.Draw(ourShader);
 
+		ImGui::Begin("Model info");
+		std::ostringstream oss1;
+		oss1 << "Vertices: " << m1.getVertexCount();
+		ImGui::Text(oss1.str().c_str());
+		std::ostringstream oss2;
+		oss2 << "Meshes: " << m1.getMeshCount();
+		ImGui::Text(oss2.str().c_str());
+		ImGui::End();
 
 
 		glEndQuery(GL_TIME_ELAPSED);
