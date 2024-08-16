@@ -25,11 +25,20 @@
 //Global variables
 //Window
 ImVec4 clear_color = ImVec4(0.15f, 0.16f, 0.13f, 1.00f);
-int window_width = 800;
-int window_height = 600;
+int window_width = 1280;
+int window_height = 720;
 //Engine
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+//Lighting
+glm::vec3 ambient_color = glm::vec3(0.1, 0.1, 0.15);
+glm::vec3 point1_color = glm::vec3(1, 0.95, 0.8);
+float point1_falloff = 5;
+//Interface
+float nextStatsUpdateTime = 0;
+float statsUpdateFreq = 4; //Times to update stats (per second)
+float renderTime = 0;
+
 //Input - Mouse
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -39,6 +48,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui windows
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
 void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
+void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float&point1_falloff);
 
 //Main
 int main() {
@@ -127,7 +137,7 @@ int main() {
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -7.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
 		//Update each entity in the scene
@@ -149,11 +159,12 @@ int main() {
 		ourShader.use();
 		//Engine uniforms
 		ourShader.setFloat("time", glfwGetTime());
+		drawImGuiWindow_lighting(window, ambient_color, point1_color, point1_falloff);
 		//Lighting uniforms
-		ourShader.setVector3("ambient_color", 0.1, 0.1, 0.15);
+		ourShader.setVector3("ambient_color", ambient_color.x, ambient_color.y, ambient_color.z);
 		ourShader.setVector3("point1_position", 3, 3, 2);
-		ourShader.setVector3("point1_color", 1, 0.7, 0.7);
-		ourShader.setFloat("point1_falloff", 5);
+		ourShader.setVector3("point1_color", point1_color.x, point1_color.y, point1_color.z);
+		ourShader.setFloat("point1_falloff", point1_falloff);
 
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
@@ -185,8 +196,12 @@ int main() {
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
 		// Convert nanoseconds to microseconds
 		float microseconds = elapsedTime / 1000.0f;
+		if (nextStatsUpdateTime <= glfwGetTime()) {
+			renderTime = (float)(int)microseconds;
+			nextStatsUpdateTime = glfwGetTime() + (1 / statsUpdateFreq);
+		}
 		//Show the result in the imGui window
-		drawImGuiWindow_stats(window, microseconds);
+		drawImGuiWindow_stats(window, renderTime);
 		// Don't forget to delete the query object when you're done
 		glDeleteQueries(1, &queryID);
 
@@ -223,8 +238,8 @@ void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
 	ImGui::Text("This is some useful text.");
 	ImGui::Checkbox("Demo Window", &show_demo_window);
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-	ImGui::SliderInt("Window Width", &window_width, 800, 1600);
-	ImGui::SliderInt("Window Height", &window_height, 450, 900);
+	ImGui::SliderInt("Window Width", &window_width, 800, 1920);
+	ImGui::SliderInt("Window Height", &window_height, 450, 1080);
 	glfwSetWindowSize(window, window_width, window_height);
 	ImGui::ColorEdit3("clear color", (float*)&clear_color);
 	ImGui::End();
@@ -232,7 +247,15 @@ void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
 void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
 	ImGui::Begin("Stats");
 	std::ostringstream oss;
-	oss << "Render time: " << rendertime << "us";
+	oss << "Render time: " << rendertime << " microseconds";
 	ImGui::Text(oss.str().c_str());
+	ImGui::End();
+}
+
+void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3&point1, float& point1_falloff) {
+	ImGui::Begin("Lighting");
+	ImGui::ColorEdit3("ambient", (float*) &ambient);
+	ImGui::ColorEdit3("p1", (float*) &point1);
+	ImGui::SliderFloat("p1 falloff", &point1_falloff, 0.25f, 20);
 	ImGui::End();
 }
