@@ -1,0 +1,6 @@
+PENDING
+
+BUGS
+
+WISHLIST
+	Add some gradient to the background

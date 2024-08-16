@@ -159,24 +159,25 @@
     <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\02_vertexcolor.frag" />
-    <None Include="Shaders\01_basic.frag" />
-    <None Include="Shaders\01_basic.vert" />
-    <None Include="Shaders\02_vertexcolor.vert" />
-    <None Include="Shaders\03_uniformColor.frag" />
-    <None Include="Shaders\03_uniformColor.vert" />
-    <None Include="Shaders\04_basicTexture.frag" />
-    <None Include="Shaders\04_basicTexture.vert" />
-    <None Include="Shaders\05_textureMix.frag" />
-    <None Include="Shaders\05_textureMix.vert" />
-    <None Include="Shaders\06_usingTransform.frag" />
-    <None Include="Shaders\06_usingTransform.vert" />
-    <None Include="Shaders\07_usingProjection.frag" />
-    <None Include="Shaders\07_usingProjection.vert" />
     <None Include="Shaders\101_Xor.frag" />
     <None Include="Shaders\101_Xor.vert" />
     <None Include="Shaders\default.frag" />
     <None Include="Shaders\default.vert" />
+    <None Include="Shaders\tutorial\01_basic.frag" />
+    <None Include="Shaders\tutorial\01_basic.vert" />
+    <None Include="Shaders\tutorial\02_vertexcolor.frag" />
+    <None Include="Shaders\tutorial\02_vertexcolor.vert" />
+    <None Include="Shaders\tutorial\03_uniformColor.frag" />
+    <None Include="Shaders\tutorial\03_uniformColor.vert" />
+    <None Include="Shaders\tutorial\04_basicTexture.frag" />
+    <None Include="Shaders\tutorial\04_basicTexture.vert" />
+    <None Include="Shaders\tutorial\05_textureMix.frag" />
+    <None Include="Shaders\tutorial\05_textureMix.vert" />
+    <None Include="Shaders\tutorial\06_usingTransform.frag" />
+    <None Include="Shaders\tutorial\06_usingTransform.vert" />
+    <None Include="Shaders\tutorial\07_usingProjection.frag" />
+    <None Include="Shaders\tutorial\07_usingProjection.vert" />
+    <None Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg" />

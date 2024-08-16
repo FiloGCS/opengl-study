@@ -95,14 +95,14 @@ int main() {
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
-	//Using the model from the 
-	//char path[] = "Models/suzanne/suzanne.obj";
-	char path[] = "Models/backpack/backpack.obj";
+	//Loading a model
+	char path[] = "Models/suzanne/suzanne_smooth.obj";
+	//char path[] = "Models/backpack/backpack.obj";
 	Model m1 = Model(path);
 	Shader ourShader = Shader("default");
 
 	/// START RENDER LOOP
-	while (!glfwWindowShouldClose(window)){
+	while (!glfwWindowShouldClose(window)) {
 		//Update frame information
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -147,7 +147,13 @@ int main() {
 
 		//TODO trying to make this work... T_T
 		ourShader.use();
+		//Engine uniforms
 		ourShader.setFloat("time", glfwGetTime());
+		//Lighting uniforms
+		ourShader.setVector3("ambient_color", 0.1, 0.1, 0.15);
+		ourShader.setVector3("point1_position", 3, 3, 2);
+		ourShader.setVector3("point1_color", 1, 0.7, 0.7);
+		ourShader.setFloat("point1_falloff", 5);
 
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);

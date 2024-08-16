@@ -22,6 +22,9 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{3e2b0055-e6e0-40ee-b6c6-ae36acddf04a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\tutorial">
+      <UniqueIdentifier>{a6ca9f11-de72-48a7-aae5-1fa21c4f14b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -88,48 +91,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\01_basic.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\01_basic.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\02_vertexcolor.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\02_vertexcolor.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\03_uniformColor.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\03_uniformColor.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\04_basicTexture.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\04_basicTexture.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\05_textureMix.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\05_textureMix.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\06_usingTransform.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\06_usingTransform.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\07_usingProjection.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\07_usingProjection.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="Shaders\101_Xor.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
@@ -142,6 +103,49 @@
     <None Include="Shaders\default.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\tutorial\01_basic.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\01_basic.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\02_vertexcolor.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\02_vertexcolor.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\03_uniformColor.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\03_uniformColor.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\04_basicTexture.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\04_basicTexture.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\05_textureMix.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\05_textureMix.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\06_usingTransform.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\06_usingTransform.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\07_usingProjection.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Shaders\tutorial\07_usingProjection.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg">
