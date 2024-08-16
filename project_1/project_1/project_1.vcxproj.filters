@@ -25,6 +25,9 @@
     <Filter Include="Resource Files\Shaders\tutorial">
       <UniqueIdentifier>{a6ca9f11-de72-48a7-aae5-1fa21c4f14b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\myUtils">
+      <UniqueIdentifier>{f35b73f9-c116-437a-a085-340eb1f362a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -69,6 +72,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UtilsNumbers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -87,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilsNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

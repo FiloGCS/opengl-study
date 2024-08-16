@@ -21,8 +21,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Model.h"
+#include "UtilsNumbers.h"
 
-//Global variables
+//GLOBAL VARIABLES-------------------------
 //Window
 ImVec4 clear_color = ImVec4(0.15f, 0.16f, 0.13f, 1.00f);
 int window_width = 1280;
@@ -38,21 +39,22 @@ float point1_falloff = 5;
 float nextStatsUpdateTime = 0;
 float statsUpdateFreq = 4; //Times to update stats (per second)
 float renderTime = 0;
-
 //Input - Mouse
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 
-// Function prototypes
+//FUNCTION PROTOTYPES-----------------------
+//callback functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//ImGui windows
+//ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
 void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
 void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float&point1_falloff);
+void drawImGuiWindow_modelInfo(Model m);
 
-//Main
+//MAIN ----------------------------------------------------------------------------
 int main() {
-	///// GLFW
+	//GLFW------------------------------
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW" << std::endl;
 		return -1;
@@ -69,7 +71,7 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
-	///// ImGUI
+	//ImGUI-----------------------------
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -81,7 +83,7 @@ int main() {
 	//ImGui state variables
 	bool show_demo_window = false;
 
-	///// GLAD
+	//GLAD------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cerr << "Failed to initialize GLAD" << std::endl;
 		glfwTerminate();
@@ -89,7 +91,7 @@ int main() {
 	}
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	///// HERE WE GO!
+	//HERE WE GO!-----------------------
 	glViewport(0, 0, window_width, window_height);
 	glEnable(GL_DEPTH_TEST);
 
@@ -181,14 +183,7 @@ int main() {
 		ourShader.setMat4("model", model);
 		m1.Draw(ourShader);
 
-		ImGui::Begin("Model info");
-		std::ostringstream oss1;
-		oss1 << "Vertices: " << m1.getVertexCount();
-		ImGui::Text(oss1.str().c_str());
-		std::ostringstream oss2;
-		oss2 << "Meshes: " << m1.getMeshCount();
-		ImGui::Text(oss2.str().c_str());
-		ImGui::End();
+		drawImGuiWindow_modelInfo(m1);
 
 
 		glEndQuery(GL_TIME_ELAPSED);
@@ -251,11 +246,20 @@ void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
 	ImGui::Text(oss.str().c_str());
 	ImGui::End();
 }
-
 void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3&point1, float& point1_falloff) {
 	ImGui::Begin("Lighting");
 	ImGui::ColorEdit3("ambient", (float*) &ambient);
 	ImGui::ColorEdit3("p1", (float*) &point1);
 	ImGui::SliderFloat("p1 falloff", &point1_falloff, 0.25f, 20);
+	ImGui::End();
+}
+void drawImGuiWindow_modelInfo(Model m) {
+	ImGui::Begin("Model info");
+	std::ostringstream oss1;
+	oss1 << "Vertices: " << UtilsNumbers::formatThousands((int)m.getVertexCount());
+	ImGui::Text(oss1.str().c_str());
+	std::ostringstream oss2;
+	oss2 << "Meshes: " << m.getMeshCount();
+	ImGui::Text(oss2.str().c_str());
 	ImGui::End();
 }
