@@ -22,6 +22,7 @@
 #include "stb_image.h"
 #include "Model.h"
 #include "UtilsNumbers.h"
+#include "Light.h"
 
 //GLOBAL VARIABLES-------------------------
 //Window
@@ -31,6 +32,8 @@ int window_height = 720;
 //Engine
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+std::vector<Entity> entities;
+std::vector<Light> lights;
 //Lighting
 glm::vec3 ambient_color = glm::vec3(0.1, 0.1, 0.15);
 glm::vec3 point1_color = glm::vec3(1, 0.95, 0.8);
@@ -42,6 +45,8 @@ float statsUpdateFreq = 4; //Times to update stats (per second)
 float renderTime = 0;
 std::vector<Shader*> loadedShaders;
 static int selectedShader = 0;
+int selectedEntity = 0;
+bool onlyDrawSelectedEntity = false;
 //Input - Mouse
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -52,8 +57,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
 void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
-void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float&point1_falloff);
-void drawImGuiWindow_modelInfo(Model m);
+void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float& point1_falloff);
+void drawImGuiWindow_modelInfo(Entity* e);
 
 //MAIN ----------------------------------------------------------------------------
 int main() {
@@ -123,24 +128,28 @@ int main() {
 	//This is the Depth testing functions
 	//it passes if fragment depth is "GL_LESS" than the buffer
 	//Other functions: GL_ALWAYS, GL_NEVER, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL
-	glDepthFunc(GL_LESS);	
+	glDepthFunc(GL_LESS);
 	//this can be used to temporarily disable WRITING while still testing
 	//glDepthMask(GL_FALSE);
-
-	//The list of entities in our scene
-	std::vector<Entity> entities;
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
 
-	//Populate with default entities for maximum chadness
+	//ADD ENTITIES-------------
 	double t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
-	int n = 1;
-	entities.reserve(n);
-	for (int i = 0; i < n; ++i) {
+	//Default entities
+	int default_entities_n = 3;
+	entities.reserve(default_entities_n);
+	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
 	}
+	//Specific entities
+	char modelPath[] = "Models/chess/knight.obj";
+	entities.at(1).model = Model(modelPath);
+	char modelPath2[] = "Models/chess/queen.obj";
+	entities.at(2).model = Model(modelPath2);
+
 	double t1 = glfwGetTime();
 	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -148,6 +157,10 @@ int main() {
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].Start();
 	}
+
+	//ADD LIGHTS---------------
+	Light point1 = Light(point1_position, "point1");
+	lights.push_back(point1);
 
 	//COMPILING SHADERS...
 	t0 = glfwGetTime();
@@ -161,7 +174,7 @@ int main() {
 	Shader shader3 = Shader("default_Normal", "World Normal");
 	loadedShaders.push_back(&shader3);
 	t1 = glfwGetTime();
-	cout << " done in " << (t1 - t0)*1000 << " miliseconds!" << endl;
+	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -204,29 +217,33 @@ int main() {
 		//Render each entity in the scene, measuring with OpenGL queries
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
 		bool statsdrawn = false;
-		for (Entity& entity : entities) {
-			//Load the material's shader, or the selected debug material
-			Shader* shader = &entity.shader;
-			if (selectedShader != 0) {
-				shader = loadedShaders.at(selectedShader);
+		for (int i = 0; i < entities.size(); i++) {
+			Entity* entity = &entities.at(i);
+
+			if (selectedEntity == i) {
+				drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
 			}
-			shader->use();
-			//Setting engine uniforms
-			shader->setVector2("resolution", window_width, window_height);
-			shader->setFloat("time", glfwGetTime());
-			drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
-			//Setting lighting uniforms
-			shader->setVector3("ambient_color", ambient_color);
-			shader->setVector3("point1_position", point1_position);
-			shader->setVector3("point1_color", point1_color);
-			shader->setFloat("point1_falloff", point1_falloff);
-			//Render
-			entity.Render(projection, view, shader);
-			if (!statsdrawn) {
-				drawImGuiWindow_modelInfo(entity.model);
-				statsdrawn = true;
+			if (!onlyDrawSelectedEntity || selectedEntity == i) {
+				//Load the material's shader, or the selected debug material
+				Shader* shader = &(entity->shader);
+				if (selectedShader != 0) {
+					shader = loadedShaders.at(selectedShader);
+				}
+				shader->use();
+				//Setting engine uniforms
+				shader->setVector2("resolution", window_width, window_height);
+				shader->setFloat("time", glfwGetTime());
+				drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
+				//Setting lighting uniforms
+				shader->setVector3("ambient_color", ambient_color);
+				shader->setVector3("point1_position", point1_position);
+				shader->setVector3("point1_color", point1_color);
+				shader->setFloat("point1_falloff", point1_falloff);
+				//Render
+				entity->Render(projection, view, shader);
 			}
 		}
+
 		glEndQuery(GL_TIME_ELAPSED);
 		GLuint64 elapsedTime;
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
@@ -286,7 +303,7 @@ void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
 	ImGui::Text(oss.str().c_str());
 	ImGui::End();
 }
-void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3&point1, float& point1_falloff) {
+void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float& point1_falloff) {
 
 	ImGui::Begin("Environment");
 	//const char* items[] = { "default", "UV_CHECK"};
@@ -306,12 +323,12 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::SeparatorText("Environment");
 	//TODO - Reset button
 	ImGui::ColorEdit3("clear color", (float*)&clear_color);
-	ImGui::ColorEdit3("ambient light", (float*) &ambient);
+	ImGui::ColorEdit3("ambient light", (float*)&ambient);
 
 	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 	ImGui::SeparatorText("Point Lights");
-	if (ImGui::BeginTabBar("Point Lights Tabs", tab_bar_flags)){
-		if (ImGui::BeginTabItem("Point Light 1")){
+	if (ImGui::BeginTabBar("Point Lights Tabs", tab_bar_flags)) {
+		if (ImGui::BeginTabItem("Point Light 1")) {
 			ImGui::InputFloat3("position", &point1_position.x);
 			ImGui::ColorEdit3("color", (float*)&point1);
 			ImGui::SliderFloat("falloff", &point1_falloff, 0.25f, 20);
@@ -321,16 +338,18 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	}
 	ImGui::End();
 }
-void drawImGuiWindow_modelInfo(Model m) {
-	ImGui::Begin("Model info");
+void drawImGuiWindow_modelInfo(Entity* e) {
+	Model m = e->model;
+	ImGui::Begin("Entity inspector");
+
+	ImGui::SeparatorText("Selected:");
+	ImGui::InputInt("TO DO", &selectedEntity);
+	selectedEntity = selectedEntity % entities.size();
+	ImGui::Checkbox("Only draw selected", &onlyDrawSelectedEntity);
 	//Prepare stream
 	std::ostringstream oss;
 	//Texture info
 	ImGui::SeparatorText("Textures");
-	//oss << "Textures: " << m.textures_loaded.size();
-	//ImGui::Text(oss.str().c_str());
-	//oss.str("");
-	//oss.clear();
 	for (int i = 0; i < m.textures_loaded.size(); i++) {
 		oss << "\t" << m.textures_loaded[0].id;
 		oss << " \"" << m.textures_loaded[0].path;

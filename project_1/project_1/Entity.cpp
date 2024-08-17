@@ -4,10 +4,9 @@ char DEFAULT_MODEL_PATH[] = "Models/suzanne/suzanne_smooth.obj";
 
 #include "Entity.h"
 #include <GLFW/glfw3.h>
-//TODO - Do we need a destructor
 Entity::Entity()
-	: shader(DEFAULT_SHADER_PATH, "Default Shader"),
-	model(DEFAULT_MODEL_PATH) {
+	: model(DEFAULT_MODEL_PATH),
+	shader(DEFAULT_SHADER_PATH, "Default Shader") {
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
