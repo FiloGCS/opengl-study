@@ -139,16 +139,16 @@ int main() {
 	double t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
 	//Default entities
-	int default_entities_n = 3;
+	int default_entities_n = 2;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
 	}
 	//Specific entities
 	char modelPath[] = "Models/chess/knight.obj";
-	entities.at(1).model = Model(modelPath);
+	entities.at(0).model = Model(modelPath);
 	char modelPath2[] = "Models/chess/queen.obj";
-	entities.at(2).model = Model(modelPath2);
+	entities.at(1).model = Model(modelPath2);
 
 	double t1 = glfwGetTime();
 	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
@@ -183,43 +183,35 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		//Update Input
+		//UPDATE INPUT
 		glfwPollEvents();
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		//Generate ImGui windows
-		if (show_demo_window) {
-			ImGui::ShowDemoWindow(&show_demo_window);
-		}
-		//drawImGuiWindow_settings(window, show_demo_window);
-
-		//Clear buffers before starting rendering
-		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//Update transform matrices
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
-		//Update each entity in the scene
+		//UPDATE ENTITIES
 		for (Entity& entity : entities) {
 			entity.Update();
 		}
 
-		//Preparing OpenGL Query to measure render time
-		GLuint queryID;
-		glGenQueries(1, &queryID);
+		//CLEAR BUFFERS
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		//Render each entity in the scene, measuring with OpenGL queries
+		//RENDER OPAQUE
+		GLuint queryID;//Preparing OpenGL Query to measure render time
+		glGenQueries(1, &queryID);
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
 		bool statsdrawn = false;
 		for (int i = 0; i < entities.size(); i++) {
 			Entity* entity = &entities.at(i);
-
 			if (selectedEntity == i) {
 				drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
 			}
@@ -243,7 +235,6 @@ int main() {
 				entity->Render(projection, view, shader);
 			}
 		}
-
 		glEndQuery(GL_TIME_ELAPSED);
 		GLuint64 elapsedTime;
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
@@ -258,7 +249,13 @@ int main() {
 		// Don't forget to delete the query object when you're done
 		glDeleteQueries(1, &queryID);
 
-		//Render ImGui windows on top of the scene
+		//TODO - RENDER TRANSLUCENT
+		// [...]
+
+		//RENDER UI
+		if (show_demo_window) {
+			ImGui::ShowDemoWindow(&show_demo_window);
+		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
