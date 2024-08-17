@@ -1,5 +1,8 @@
 PENDING:
+	-Add Camera movement
+		-Remove Object Movement
 	-Rework the Entity class to work with our new capabilities
+		-Add Update() method
 		Use some kind of default texture?
 		(I need to check how textures are working in detail)
 	-Support multiple objects in a scene, or a scene, in general...
