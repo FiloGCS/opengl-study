@@ -131,7 +131,7 @@ int main() {
 	std::vector<Entity> entities;
 
 	//DEBUG - Populate with chad cubes
-	int n = 0; // Or however many Entities you want
+	int n = 1; // Or however many Entities you want
 	entities.reserve(n);
 	for (int i = 0; i < n; ++i) {
 		entities.emplace_back();
@@ -148,10 +148,15 @@ int main() {
 	double t1 = glfwGetTime();
 	cout << "Models loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
+	//Launch Start for all entities
+	for (int i = 0; i < entities.size(); i++) {
+		entities[i].Start();
+	}
+
 	//COMPILING SHADERS...
 	t0 = glfwGetTime();
 	cout << "Compiling shaders...\t";
-	Shader shader1 = Shader("default", "default");
+	Shader shader1 = Shader("default", "Entity Shader");
 	loadedShaders.push_back(&shader1);
 	Shader shader4 = Shader("default_Flat", "Flat Shading");
 	loadedShaders.push_back(&shader4);
@@ -161,7 +166,6 @@ int main() {
 	loadedShaders.push_back(&shader3);
 	t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0)*1000 << " miliseconds!" << endl;
-
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -194,7 +198,7 @@ int main() {
 
 		//Update each entity in the scene
 		for (Entity& entity : entities) {
-			entity.Update(glfwGetTime());
+			entity.Update();
 		}
 
 		//Preparing OpenGL Query to measure render time
@@ -204,40 +208,25 @@ int main() {
 		//Render each entity in the scene, measuring with OpenGL queries
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
 		for (Entity& entity : entities) {
-			entity.Render(projection, view);
+			//Load the material's shader, or the selected debug material
+			Shader* shader = &entity.shader;
+			if (selectedShader != 0) {
+				shader = loadedShaders.at(selectedShader);
+			}
+			shader->use();
+			//Setting engine uniforms
+			shader->setVector2("resolution", window_width, window_height);
+			shader->setFloat("time", glfwGetTime());
+			drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
+			//Setting lighting uniforms
+			shader->setVector3("ambient_color", ambient_color);
+			shader->setVector3("point1_position", point1_position);
+			shader->setVector3("point1_color", point1_color);
+			shader->setFloat("point1_falloff", point1_falloff);
+			//Render
+			entity.Render(projection, view, shader);
 		}
-
-		Shader* shader = loadedShaders.at(selectedShader);
-		//TODO trying to make this work... T_T
-		shader->use();
-		//Engine uniforms
-		shader->setVector2("resolution", window_width, window_height);
-		shader->setFloat("time", glfwGetTime());
-		drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
-		//Lighting uniforms
-		shader->setVector3("ambient_color", ambient_color);
-		shader->setVector3("point1_position", point1_position);
-		shader->setVector3("point1_color", point1_color);
-		shader->setFloat("point1_falloff", point1_falloff);
-
-		shader->setMat4("projection", projection);
-		shader->setMat4("view", view);
-		glm::mat4 model = glm::mat4(1.0f);
-		//translation
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		//scale
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-		//rotation
-		float time = glfwGetTime();
-		glm::vec3 rotSpeed = glm::vec3(0.0f, 45.0f, 0.0f);
-		glm::quat rotation = glm::quat(glm::vec3(glm::radians((time * rotSpeed.x)), glm::radians(time * rotSpeed.y), glm::radians(time * rotSpeed.z)));
-		model = model * glm::mat4_cast(rotation);
-		shader->setMat4("model", model);
-		m1.Draw(*shader);
-
 		drawImGuiWindow_modelInfo(m1);
-
-
 		glEndQuery(GL_TIME_ELAPSED);
 		GLuint64 elapsedTime;
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);

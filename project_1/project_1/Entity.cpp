@@ -1,99 +1,58 @@
-constexpr char DEFAULT_SHADER_PATH[] = "07_usingProjection";
-//constexpr char DEFAULT_SHADER_PATH[] = "101_XorAttenuation";
+constexpr char DEFAULT_SHADER_PATH[] = "default";
 constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
+char DEFAULT_MODEL_PATH[] = "Models/suzanne/suzanne_smooth.obj";
 
 #include "Entity.h"
+#include <GLFW/glfw3.h>
 //TODO - Do we need a destructor
-Entity::Entity() : shader(DEFAULT_SHADER_PATH, "Default Shader") {
+Entity::Entity()
+	: shader(DEFAULT_SHADER_PATH, "Default Shader"),
+	model(DEFAULT_MODEL_PATH) {
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
 	rotation = glm::quat();
 
-	//VAO
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	//VBO
-	float boxVertices[] = {
-	// X, Y, Z, U, V
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
-	//AttribPointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	//Textures
-	stbi_set_flip_vertically_on_load(true);
-	Texture2D texture1(DEFAULT_TEXTURE_PATH);
-	//Texture2D texture2("Textures/T_Noise_03a.png");
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1.ID);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, texture2.ID);
+	//Model
 	//Shader
 	//Already managed via the initializer list
 }
 
-void Entity::Update(double time) {
-	/*setRotation(glm::vec3(glm::radians(time*7 + 30.0f), glm::radians(time * 11 + 45.0f), glm::radians(time * 5 + 60.0f)));*/
-	setRotation(glm::vec3(glm::radians(time * 5.0f), glm::radians(time * 7.0f), glm::radians(time * 11.0f)));
+void Entity::Start()
+{
+	
+}
+
+void Entity::Update() {
+	float time = glfwGetTime();
+	glm::vec3 rotSpeed = glm::vec3(0.0f, 45.0f, 0.0f);
+	rotation = glm::quat(glm::radians(time * rotSpeed));
 }
 
 void Entity::Render(glm::mat4 projection, glm::mat4 view){
 	shader.use();
+	//TODO - set all the uniforms like in Program.cpp
 	shader.setInt("u_texture1", 0);
 	shader.setInt("u_texture2", 1);
 	shader.setMat4("model", getModelMatrix());
 	shader.setMat4("view", view);
 	shader.setMat4("projection", projection);
 
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36); //TODO set the correct values
+	model.Draw(shader); //TODO is copying shader?
 
+}
+
+void Entity::Render(glm::mat4 projection, glm::mat4 view, Shader* customShader)
+{
+	customShader->use();
+	//TODO - set all the uniforms like in Program.cpp
+	customShader->setInt("u_texture1", 0);
+	customShader->setInt("u_texture2", 1);
+	customShader->setMat4("model", getModelMatrix());
+	customShader->setMat4("view", view);
+	customShader->setMat4("projection", projection);
+
+	model.Draw(*customShader); //TODO is copying shader?
 }
 
 glm::mat4 Entity::getModelMatrix(){

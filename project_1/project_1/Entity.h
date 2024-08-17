@@ -14,6 +14,7 @@
 
 #include "Shader.h"
 #include "Texture2D.h"
+#include "Model.h"
 
 class Entity {
 
@@ -22,13 +23,15 @@ public:
 	glm::vec3 position;
 	glm::quat rotation;
 	glm::vec3 scale;
-	unsigned int VAO;
-	unsigned int VBO;
+
+	Model model;
 	Shader shader;
 
 	Entity();
-	void Update(double time);
+	void Start();
+	void Update();
 	void Render(glm::mat4 projection, glm::mat4 view);
+	void Render(glm::mat4 projection, glm::mat4 view, Shader* customShader);
 	glm::mat4 getModelMatrix();
 
 	void setRotation(const glm::vec3& eulerAngles);
