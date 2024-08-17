@@ -10,4 +10,4 @@ PENDING:
 BUGS:
 
 WISHLIST:
-	Add some gradient to the background
+	Add some gradient to the background (skybox shader?)
