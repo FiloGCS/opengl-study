@@ -1,4 +1,4 @@
-#include "Model.h"
+﻿#include "Model.h"
 #include "stb_image.h"
 
 void Model::Draw(Shader& shader) {
@@ -21,6 +21,7 @@ void Model::loadModel(string path) {
 	}
 	directory = path.substr(0, path.find_last_of('/'));
 
+	showSceneInfo(scene);
 	processNode(scene->mRootNode, scene);
 }
 
@@ -126,6 +127,24 @@ unsigned int Model::getMeshCount()
 {
 	return meshes.size();
 }
+
+void Model::showSceneInfo(const aiScene * scene){
+	cout << "----Importing scene: " << scene->mRootNode->mName.C_Str() << "----" << endl;
+	cout << "\nMeshes: " << scene->mNumMeshes << endl;
+	for (int i = 0; i < scene->mNumMeshes; i++) {
+		cout << "\t" << i << " - " << scene->mMeshes[i]->mName.C_Str() << endl;
+	}
+	cout << "\nMaterials: " << scene->mNumMaterials << endl;
+	for (int i = 0; i < scene->mNumMaterials; i++) {
+		cout << "\t" << i << " - " << scene->mMaterials[i]->GetName().C_Str() << endl;
+	}
+	cout << "\nTextures: " << scene->mNumTextures << endl;
+	for (int i = 0; i < scene->mNumTextures; i++) {
+		cout << "\t" << i << " - " << scene->mTextures[i]->mFilename.C_Str() << endl;
+	}
+	cout << "\n-------------------------------------------" <<endl;
+}
+
 
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
 {

@@ -34,11 +34,14 @@ float lastFrame = 0.0f;
 //Lighting
 glm::vec3 ambient_color = glm::vec3(0.1, 0.1, 0.15);
 glm::vec3 point1_color = glm::vec3(1, 0.95, 0.8);
+glm::vec3 point1_position = glm::vec3(1, 1, 3);
 float point1_falloff = 5;
 //Interface
 float nextStatsUpdateTime = 0;
 float statsUpdateFreq = 4; //Times to update stats (per second)
 float renderTime = 0;
+std::vector<Shader*> loadedShaders;
+static int selectedShader = 0;
 //Input - Mouse
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -49,7 +52,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
 void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
-void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float&point1_falloff);
+void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float&point1_falloff);
 void drawImGuiWindow_modelInfo(Model m);
 
 //MAIN ----------------------------------------------------------------------------
@@ -134,7 +137,15 @@ int main() {
 	char path[] = "Models/suzanne/suzanne_smooth.obj";
 	//char path[] = "Models/backpack/backpack.obj";
 	Model m1 = Model(path);
-	Shader ourShader = Shader("default");
+
+
+	Shader shader1 = Shader("default");
+	loadedShaders.push_back(&shader1);
+	Shader shader2 = Shader("default_UV");
+	loadedShaders.push_back(&shader2);
+	Shader shader3 = Shader("default_Normal");
+	loadedShaders.push_back(&shader3);
+
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -180,20 +191,21 @@ int main() {
 			entity.Render(projection, view);
 		}
 
+		Shader* shader = loadedShaders.at(selectedShader);
 		//TODO trying to make this work... T_T
-		ourShader.use();
+		shader->use();
 		//Engine uniforms
-		ourShader.setVector2("resolution", window_width, window_height);
-		ourShader.setFloat("time", glfwGetTime());
-		drawImGuiWindow_lighting(window, ambient_color, point1_color, point1_falloff);
+		shader->setVector2("resolution", window_width, window_height);
+		shader->setFloat("time", glfwGetTime());
+		drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
 		//Lighting uniforms
-		ourShader.setVector3("ambient_color", ambient_color.x, ambient_color.y, ambient_color.z);
-		ourShader.setVector3("point1_position", 3, 3, 2);
-		ourShader.setVector3("point1_color", point1_color.x, point1_color.y, point1_color.z);
-		ourShader.setFloat("point1_falloff", point1_falloff);
+		shader->setVector3("ambient_color", ambient_color);
+		shader->setVector3("point1_position", point1_position);
+		shader->setVector3("point1_color", point1_color);
+		shader->setFloat("point1_falloff", point1_falloff);
 
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+		shader->setMat4("projection", projection);
+		shader->setMat4("view", view);
 		glm::mat4 model = glm::mat4(1.0f);
 		//translation
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
@@ -204,8 +216,8 @@ int main() {
 		glm::vec3 rotSpeed = glm::vec3(0.0f, 25.0f, 0.0f);
 		glm::quat rotation = glm::quat(glm::vec3(glm::radians(time * rotSpeed.x), glm::radians(time * rotSpeed.y), glm::radians(time * rotSpeed.z)));
 		model = model * glm::mat4_cast(rotation);
-		ourShader.setMat4("model", model);
-		m1.Draw(ourShader);
+		shader->setMat4("model", model);
+		m1.Draw(*shader);
 
 		drawImGuiWindow_modelInfo(m1);
 
@@ -270,20 +282,50 @@ void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
 	ImGui::Text(oss.str().c_str());
 	ImGui::End();
 }
-void drawImGuiWindow_lighting(GLFWwindow* window, glm::vec3& ambient, glm::vec3&point1, float& point1_falloff) {
-	ImGui::Begin("Lighting");
-	ImGui::ColorEdit3("ambient", (float*) &ambient);
-	ImGui::ColorEdit3("p1", (float*) &point1);
-	ImGui::SliderFloat("p1 falloff", &point1_falloff, 0.25f, 20);
+void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3&point1, float& point1_falloff) {
+
+	ImGui::Begin("Environment");
+	//const char* items[] = { "default", "UV_CHECK"};
+	//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+	ImGui::InputInt(std::to_string(loadedShaders.at(selectedShader%loadedShaders.size())->ID).c_str(), &selectedShader);
+	selectedShader = selectedShader % loadedShaders.size();
+	ImGui::Text("Environment");
+	//TODO - Reset button
+	ImGui::ColorEdit3("clear color", (float*)&clear_color);
+	ImGui::ColorEdit3("ambient light", (float*) &ambient);
+	ImGui::Text("Point Light 1");
+	ImGui::InputFloat3("position", &point1_position.x);
+	ImGui::ColorEdit3("color", (float*) &point1);
+	ImGui::SliderFloat("falloff", &point1_falloff, 0.25f, 20);
 	ImGui::End();
 }
 void drawImGuiWindow_modelInfo(Model m) {
 	ImGui::Begin("Model info");
-	std::ostringstream oss1;
-	oss1 << "Vertices: " << UtilsNumbers::formatThousands((int)m.getVertexCount());
-	ImGui::Text(oss1.str().c_str());
-	std::ostringstream oss2;
-	oss2 << "Meshes: " << m.getMeshCount();
-	ImGui::Text(oss2.str().c_str());
+	//Prepare stream
+	std::ostringstream oss;
+	//Texture info
+	ImGui::SeparatorText("Textures");
+	//oss << "Textures: " << m.textures_loaded.size();
+	//ImGui::Text(oss.str().c_str());
+	//oss.str("");
+	//oss.clear();
+	for (int i = 0; i < m.textures_loaded.size(); i++) {
+		oss << "\t" << m.textures_loaded[0].id;
+		oss << " \"" << m.textures_loaded[0].path;
+		oss << "\" (" << m.textures_loaded[0].type << ")";
+		ImGui::Text(oss.str().c_str());
+		oss.str("");
+		oss.clear();
+	}
+	ImGui::SeparatorText("Mesh info");
+	oss << "Meshes: " << m.getMeshCount();
+	ImGui::Text(oss.str().c_str());
+	oss.str("");
+	oss.clear();
+	//Vertices
+	oss << "Vertices: " << UtilsNumbers::formatThousands((int)m.getVertexCount());
+	ImGui::Text(oss.str().c_str());
+	oss.str("");
+	oss.clear();
 	ImGui::End();
 }

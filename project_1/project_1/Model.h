@@ -19,13 +19,16 @@ public:
 	void Draw(Shader &shader);
 
 	//model data
-	vector<Mesh> meshes;
 	string directory;
+	vector<Mesh> meshes;
 	vector<Texture> textures_loaded;
 
 	//Model information functions
 	unsigned int getVertexCount();
 	unsigned int getMeshCount();
+
+	void showSceneInfo(const aiScene * scene);
+
 private:
 
 	void loadModel(string path);

@@ -155,6 +155,18 @@
       <Filter>Resource Files\Shaders\tutorial</Filter>
     </None>
     <None Include="TODO.txt" />
+    <None Include="Shaders\default_UV.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\default_UV.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\default_Normal.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\default_Normal.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\T_UV_02.jpg">
