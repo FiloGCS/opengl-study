@@ -57,8 +57,8 @@ void drawImGuiWindow_modelInfo(Model m);
 
 //MAIN ----------------------------------------------------------------------------
 int main() {
-	//GLFW------------------------------
 
+	//GLFW------------------------------
 	cout << "Initializing GLFW...\t";
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -130,23 +130,19 @@ int main() {
 	//The list of entities in our scene
 	std::vector<Entity> entities;
 
-	//DEBUG - Populate with chad cubes
-	int n = 1; // Or however many Entities you want
+	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+	stbi_set_flip_vertically_on_load(true);
+
+	//Populate with default entities for maximum chadness
+	double t0 = glfwGetTime();
+	cout << "Loading entities..." << endl;
+	int n = 1;
 	entities.reserve(n);
 	for (int i = 0; i < n; ++i) {
 		entities.emplace_back();
 	}
-
-	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-	stbi_set_flip_vertically_on_load(true);
-	//Loading a model
-	double t0 = glfwGetTime();
-	cout << "Loading models..." << endl;
-	char path[] = "Models/suzanne/suzanne_smooth.obj";
-	//char path[] = "Models/backpack/backpack.obj";
-	Model m1 = Model(path);
 	double t1 = glfwGetTime();
-	cout << "Models loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
+	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
 	//Launch Start for all entities
 	for (int i = 0; i < entities.size(); i++) {
@@ -207,6 +203,7 @@ int main() {
 
 		//Render each entity in the scene, measuring with OpenGL queries
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
+		bool statsdrawn = false;
 		for (Entity& entity : entities) {
 			//Load the material's shader, or the selected debug material
 			Shader* shader = &entity.shader;
@@ -225,8 +222,11 @@ int main() {
 			shader->setFloat("point1_falloff", point1_falloff);
 			//Render
 			entity.Render(projection, view, shader);
+			if (!statsdrawn) {
+				drawImGuiWindow_modelInfo(entity.model);
+				statsdrawn = true;
+			}
 		}
-		drawImGuiWindow_modelInfo(m1);
 		glEndQuery(GL_TIME_ELAPSED);
 		GLuint64 elapsedTime;
 		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
@@ -264,7 +264,6 @@ int main() {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
-
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
 	static float f = 0.0f;
