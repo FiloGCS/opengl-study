@@ -4,7 +4,7 @@ constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
 
 #include "Entity.h"
 //TODO - Do we need a destructor
-Entity::Entity() : shader(DEFAULT_SHADER_PATH){
+Entity::Entity() : shader(DEFAULT_SHADER_PATH, "Default Shader") {
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);

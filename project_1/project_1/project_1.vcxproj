@@ -165,6 +165,8 @@
     <None Include="Shaders\101_Xor.vert" />
     <None Include="Shaders\default.frag" />
     <None Include="Shaders\default.vert" />
+    <None Include="Shaders\default_Flat.frag" />
+    <None Include="Shaders\default_Flat.vert" />
     <None Include="Shaders\default_Normal.frag" />
     <None Include="Shaders\default_Normal.vert" />
     <None Include="Shaders\default_UV.frag" />

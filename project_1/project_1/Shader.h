@@ -24,12 +24,13 @@ class Shader {
 public:
 	// the shader program OpenGL ID
 	unsigned int ID;
+	std::string name;
 
 	//---CONSTRUCTORS
 	// This constructor generates the shader program from two shader paths
-	Shader(const char* vertexPath, const char* fragmentPath);
+	Shader(const char* vertexPath, const char* fragmentPath, std::string name);
 	// This constructor assumes that both shaders are in "Shaders/" with the same name
-	Shader(std::string shaderName);
+	Shader(std::string shaderName, std::string name);
 	//Disable copy constructor and disable assignment operator
 	//	This prevents shallow copying, which can mean multiple Shader objects share ID.
 	//	That would be bad news.

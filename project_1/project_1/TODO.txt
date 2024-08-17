@@ -1,9 +1,10 @@
-PENDING
-	Use some kind of default texture?
-		I need to check how textures are working in detail
-	Improve model loading, textures, materials...
-	Set multiple objects in a scene, or a scene, in general...
-BUGS
+PENDING:
+	-Rework the Entity class to work with our new capabilities
+		Use some kind of default texture?
+		(I need to check how textures are working in detail)
+	-Support multiple objects in a scene, or a scene, in general...
+	-Add Transparent objects in a different pass
+BUGS:
 
-WISHLIST
+WISHLIST:
 	Add some gradient to the background

@@ -14,7 +14,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Constructor generates the shader on the fly
-Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+Shader::Shader(const char* vertexPath, const char* fragmentPath, std::string name) {
+	this->name = name;
 	//1. Retrieve the vertex/fragment source code from filePath
 	//TODO - understand fstreams, strings and all these things in C++
 	std::string vertexCode;
@@ -63,8 +64,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 }
-Shader::Shader(const std::string shaderName)
-	: Shader(("Shaders/" + shaderName + ".vert").c_str(), ("Shaders/" + shaderName + ".frag").c_str()) {
+Shader::Shader(const std::string shaderName, std::string name)
+	: Shader(("Shaders/" + shaderName + ".vert").c_str(), ("Shaders/" + shaderName + ".frag").c_str(), name) {
 
 }
 // This activates the shader for following renders

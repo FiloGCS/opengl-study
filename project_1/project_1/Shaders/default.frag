@@ -42,6 +42,7 @@ void main(){
 	vec4 lights = vec4(ambient_color,1);
 	lights += vec4(point1,1);
 
+
 	FragColor = texture(u_texture1, texCoord) * lights;
 	//FragColor = vec4(1,1,1,1) * lights;
 

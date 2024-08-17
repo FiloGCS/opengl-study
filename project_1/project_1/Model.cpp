@@ -21,7 +21,7 @@ void Model::loadModel(string path) {
 	}
 	directory = path.substr(0, path.find_last_of('/'));
 
-	showSceneInfo(scene);
+	//showSceneInfo(scene);
 	processNode(scene->mRootNode, scene);
 }
 

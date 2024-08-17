@@ -58,6 +58,8 @@ void drawImGuiWindow_modelInfo(Model m);
 //MAIN ----------------------------------------------------------------------------
 int main() {
 	//GLFW------------------------------
+
+	cout << "Initializing GLFW...\t";
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW" << std::endl;
 		return -1;
@@ -73,8 +75,10 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	cout << " Done!" << endl;
 
 	//ImGUI-----------------------------
+	cout << "Initializing ImGui...\t";
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -85,18 +89,20 @@ int main() {
 	ImGui_ImplOpenGL3_Init();
 	//ImGui state variables
 	bool show_demo_window = false;
+	cout << " Done!" << endl;
 
 	//GLAD------------------------------
+	cout << "Initializing GLAD...\t";
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cerr << "Failed to initialize GLAD" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	cout << " Done!" << endl;
 
 	//HERE WE GO!-----------------------
 	glViewport(0, 0, window_width, window_height);
-
 	//STENCIL BUFFER
 	//glEnable(GL_STENCIL_TEST);
 	//glDisable(GL_STENCIL_TEST);
@@ -134,17 +140,27 @@ int main() {
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
 	//Loading a model
+	double t0 = glfwGetTime();
+	cout << "Loading models..." << endl;
 	char path[] = "Models/suzanne/suzanne_smooth.obj";
 	//char path[] = "Models/backpack/backpack.obj";
 	Model m1 = Model(path);
+	double t1 = glfwGetTime();
+	cout << "Models loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
-
-	Shader shader1 = Shader("default");
+	//COMPILING SHADERS...
+	t0 = glfwGetTime();
+	cout << "Compiling shaders...\t";
+	Shader shader1 = Shader("default", "default");
 	loadedShaders.push_back(&shader1);
-	Shader shader2 = Shader("default_UV");
+	Shader shader4 = Shader("default_Flat", "Flat Shading");
+	loadedShaders.push_back(&shader4);
+	Shader shader2 = Shader("default_UV", "UV");
 	loadedShaders.push_back(&shader2);
-	Shader shader3 = Shader("default_Normal");
+	Shader shader3 = Shader("default_Normal", "World Normal");
 	loadedShaders.push_back(&shader3);
+	t1 = glfwGetTime();
+	cout << " done in " << (t1 - t0)*1000 << " miliseconds!" << endl;
 
 
 	/// START RENDER LOOP
@@ -213,8 +229,8 @@ int main() {
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
 		//rotation
 		float time = glfwGetTime();
-		glm::vec3 rotSpeed = glm::vec3(0.0f, 25.0f, 0.0f);
-		glm::quat rotation = glm::quat(glm::vec3(glm::radians(time * rotSpeed.x), glm::radians(time * rotSpeed.y), glm::radians(time * rotSpeed.z)));
+		glm::vec3 rotSpeed = glm::vec3(0.0f, 45.0f, 0.0f);
+		glm::quat rotation = glm::quat(glm::vec3(glm::radians((time * rotSpeed.x)), glm::radians(time * rotSpeed.y), glm::radians(time * rotSpeed.z)));
 		model = model * glm::mat4_cast(rotation);
 		shader->setMat4("model", model);
 		m1.Draw(*shader);
@@ -287,16 +303,34 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::Begin("Environment");
 	//const char* items[] = { "default", "UV_CHECK"};
 	//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
-	ImGui::InputInt(std::to_string(loadedShaders.at(selectedShader%loadedShaders.size())->ID).c_str(), &selectedShader);
-	selectedShader = selectedShader % loadedShaders.size();
-	ImGui::Text("Environment");
+	ImGui::SeparatorText("Shader Picker");
+	int buttons_per_line = 3;
+	for (int i = 0; i < loadedShaders.size(); i++) {
+		ImGui::RadioButton(loadedShaders.at(i)->name.c_str(), &selectedShader, i);
+		bool same_line = (i + 1) % buttons_per_line != 0
+			&& (i + 1) < loadedShaders.size();
+		if (same_line) {
+			ImGui::SameLine();
+		}
+	}
+	//ImGui::InputInt(loadedShaders.at(selectedShader%loadedShaders.size())->name.c_str(), &selectedShader);
+	//selectedShader = selectedShader % loadedShaders.size();
+	ImGui::SeparatorText("Environment");
 	//TODO - Reset button
 	ImGui::ColorEdit3("clear color", (float*)&clear_color);
 	ImGui::ColorEdit3("ambient light", (float*) &ambient);
-	ImGui::Text("Point Light 1");
-	ImGui::InputFloat3("position", &point1_position.x);
-	ImGui::ColorEdit3("color", (float*) &point1);
-	ImGui::SliderFloat("falloff", &point1_falloff, 0.25f, 20);
+
+	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+	ImGui::SeparatorText("Point Lights");
+	if (ImGui::BeginTabBar("Point Lights Tabs", tab_bar_flags)){
+		if (ImGui::BeginTabItem("Point Light 1")){
+			ImGui::InputFloat3("position", &point1_position.x);
+			ImGui::ColorEdit3("color", (float*)&point1);
+			ImGui::SliderFloat("falloff", &point1_falloff, 0.25f, 20);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 	ImGui::End();
 }
 void drawImGuiWindow_modelInfo(Model m) {
