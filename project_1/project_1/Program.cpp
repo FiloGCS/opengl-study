@@ -23,6 +23,7 @@
 #include "Model.h"
 #include "UtilsNumbers.h"
 #include "Light.h"
+#include "Camera.h"
 
 //GLOBAL VARIABLES-------------------------
 //Window
@@ -34,6 +35,9 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 std::vector<Entity> entities;
 std::vector<Light> lights;
+//Camera
+Camera camera;
+float cameraSpeed = 1;
 //Lighting
 glm::vec3 ambient_color = glm::vec3(0.1, 0.1, 0.15);
 glm::vec3 point1_color = glm::vec3(1, 0.95, 0.8);
@@ -135,11 +139,14 @@ int main() {
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
 
+	//Setup Camera
+	camera = Camera(glm::vec3(0.0f, 0.0f, -4.0f));
+
 	//ADD ENTITIES-------------
 	double t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
 	//Default entities
-	int default_entities_n = 2;
+	int default_entities_n = 1;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
@@ -182,14 +189,33 @@ int main() {
 		//UPDATE INPUT
 		glfwPollEvents();
 
+		glm::vec3 camera_move_direction = glm::vec3(0);
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			cout << "W" << endl;
+			camera_move_direction += glm::vec3(0, 0, 1);
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			cout << "A" << endl;
+			camera_move_direction += glm::vec3(1, 0, 0);
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			cout << "S" << endl;
+			camera_move_direction += glm::vec3(0, 0, -1);
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			cout << "D" << endl;
+			camera_move_direction += glm::vec3(-1, 0, 0);
+		}
+		//camera_move_direction = glm::normalize(camera_move_direction);
+		camera.position += camera_move_direction * deltaTime;
+
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		//Update transform matrices
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
+		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
 		//UPDATE ENTITIES
@@ -301,6 +327,8 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::Begin("Environment");
 	//const char* items[] = { "default", "UV_CHECK"};
 	//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+	ImGui::SeparatorText("Camera");
+	ImGui::InputFloat3("Position", &(camera.position[0]));
 	ImGui::SeparatorText("Shader Picker");
 	int buttons_per_line = 3;
 	for (int i = 0; i < loadedShaders.size(); i++) {
