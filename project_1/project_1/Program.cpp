@@ -145,10 +145,6 @@ int main() {
 		entities.emplace_back();
 	}
 	//Specific entities
-	char modelPath[] = "Models/chess/knight.obj";
-	entities.at(0).model = Model(modelPath);
-	char modelPath2[] = "Models/chess/queen.obj";
-	entities.at(1).model = Model(modelPath2);
 
 	double t1 = glfwGetTime();
 	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
@@ -342,9 +338,14 @@ void drawImGuiWindow_modelInfo(Entity* e) {
 	ImGui::SeparatorText("Selected:");
 	ImGui::InputInt("TO DO", &selectedEntity);
 	selectedEntity = selectedEntity % entities.size();
-	ImGui::Checkbox("Only draw selected", &onlyDrawSelectedEntity);
+	ImGui::Checkbox("Isolate selected", &onlyDrawSelectedEntity);
 	//Prepare stream
 	std::ostringstream oss;
+	//Transform
+	ImGui::SeparatorText("Transform");
+	ImGui::InputFloat3("Position", &(e->position[0]));
+	ImGui::InputFloat4("Rotation", &(e->rotation[0]));
+	ImGui::InputFloat3("Scale", &(e->scale[0]));
 	//Texture info
 	ImGui::SeparatorText("Textures");
 	for (int i = 0; i < m.textures_loaded.size(); i++) {
