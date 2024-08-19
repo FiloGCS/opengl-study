@@ -47,6 +47,17 @@ float point1_falloff = 5;
 float nextStatsUpdateTime = 0;
 float statsUpdateFreq = 4; //Times to update stats (per second)
 float renderTime = 0;
+//Debug
+struct frameInfo {
+	int FrameNumber;
+	double time;
+	float frameTime;
+	float updateTime;
+	float renderTime;
+};
+unsigned int frame = 0;
+std::vector<frameInfo> frameHistory;
+
 std::vector<Shader*> loadedShaders;
 static int selectedShader = 0;
 int selectedEntity = 0;
@@ -60,7 +71,7 @@ bool firstMouse = true;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
-void drawImGuiWindow_stats(GLFWwindow* window, float rendertime);
+void drawImGuiWindow_stats(GLFWwindow* window);
 void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float& point1_falloff);
 void drawImGuiWindow_modelInfo(Entity* e);
 
@@ -179,12 +190,19 @@ int main() {
 	t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
+	//ENABLE VSYNC
+	glfwSwapInterval(3);
+
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//Update frame information
+		frameInfo currentFrameInfo;
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		currentFrameInfo.time = glfwGetTime();
+		currentFrameInfo.FrameNumber = frame++;
+		frame++;
 
 		//UPDATE INPUT
 		glfwPollEvents();
@@ -219,15 +237,19 @@ int main() {
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / window_height, 0.1f, 100.0f);
 
 		//UPDATE ENTITIES
+		double tUpdate0 = glfwGetTime();
 		for (Entity& entity : entities) {
 			entity.Update();
 		}
+		currentFrameInfo.updateTime = (glfwGetTime() - tUpdate0)*1000;
 
 		//CLEAR BUFFERS
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//RENDER OPAQUE
+
+		double tRender0 = glfwGetTime();
 		GLuint queryID;//Preparing OpenGL Query to measure render time
 		glGenQueries(1, &queryID);
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
@@ -257,27 +279,27 @@ int main() {
 				entity->Render(projection, view, shader);
 			}
 		}
-		glEndQuery(GL_TIME_ELAPSED);
-		GLuint64 elapsedTime;
-		glGetQueryObjectui64v(queryID, GL_QUERY_RESULT, &elapsedTime);
-		// Convert nanoseconds to microseconds
-		float microseconds = elapsedTime / 1000.0f;
-		if (nextStatsUpdateTime <= glfwGetTime()) {
-			renderTime = (float)(int)microseconds;
-			nextStatsUpdateTime = glfwGetTime() + (1 / statsUpdateFreq);
-		}
-		//Show the result in the imGui window
-		drawImGuiWindow_stats(window, renderTime);
-		// Don't forget to delete the query object when you're done
-		glDeleteQueries(1, &queryID);
+		currentFrameInfo.renderTime = (glfwGetTime() - tRender0)*1000;
 
 		//TODO - RENDER TRANSLUCENT
 		// [...]
 
-		//RENDER UI
-		if (show_demo_window) {
-			ImGui::ShowDemoWindow(&show_demo_window);
+
+		//DEBUG
+		//Save this frame's info
+		currentFrameInfo.frameTime = (glfwGetTime() - currentFrameInfo.time);
+		frameHistory.push_back(currentFrameInfo);
+		if (frameHistory.size() > 120) {
+			frameHistory.erase(frameHistory.begin());
 		}
+
+		//RENDER IMGUI
+		/*if (show_demo_window) {
+			ImGui::ShowDemoWindow(&show_demo_window);
+		}*/
+		drawImGuiWindow_stats(window);
+
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -315,11 +337,34 @@ void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
 	ImGui::ColorEdit3("clear color", (float*)&clear_color);
 	ImGui::End();
 }
-void drawImGuiWindow_stats(GLFWwindow* window, float rendertime) {
+void drawImGuiWindow_stats(GLFWwindow* window) {
 	ImGui::Begin("Stats");
+
 	std::ostringstream oss;
-	oss << "Render time: " << rendertime << " microseconds";
+	oss.precision(3);
+	oss << "Frame " << frame; 
 	ImGui::Text(oss.str().c_str());
+	if (frameHistory.size() > 0) {
+		oss.str("");
+		oss.clear();
+		float tDelta = frameHistory.back().time - frameHistory.begin()->time;
+		float n = frameHistory.size();
+		float fps = n / tDelta;
+		oss.precision(1);
+		oss << " - Average FPS: " << std::fixed << fps;
+		ImGui::SameLine();
+		ImGui::Text(oss.str().c_str());
+		oss.precision(3);
+	}
+	oss.str("");
+	oss.clear();
+	oss << std::fixed << frameHistory.back().updateTime << "ms Update";
+	ImGui::PlotHistogram(oss.str().c_str(), &frameHistory.at(0).updateTime, frameHistory.size(), 0, NULL, 0.0f, 5.0f, ImVec2(0, 30.0f), (int)sizeof(frameInfo));
+
+	oss.str("");
+	oss.clear();
+	oss << std::fixed << frameHistory.back().renderTime << "ms Render";
+	ImGui::PlotHistogram(oss.str().c_str(), &frameHistory.at(0).renderTime, frameHistory.size(), 0, NULL, 0.0f, 5.0f, ImVec2(0, 30.0f), (int)sizeof(frameInfo));
 	ImGui::End();
 }
 void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float& point1_falloff) {
