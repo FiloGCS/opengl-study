@@ -25,6 +25,7 @@ public:
 	// the shader program OpenGL ID
 	unsigned int ID;
 	std::string name;
+	static int GLCacheActiveShader;
 
 	//---CONSTRUCTORS
 	// This constructor generates the shader program from two shader paths

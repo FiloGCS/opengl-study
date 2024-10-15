@@ -8,6 +8,9 @@ PENDING:
 	-Support multiple objects in a scene, or a scene, in general...
 		-Add XYZ lines and maybe a gizmo?
 	-Add Transparent objects in a different pass
+OPTIMIZING:
+	-Each entity is creating it's own version of the default shader, creating unnecessary glUseProgram calls
+
 BUGS:
 
 WISHLIST:

@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+int Shader::GLCacheActiveShader = -1;
+
 // Constructor generates the shader on the fly
 Shader::Shader(const char* vertexPath, const char* fragmentPath, std::string name) {
 	this->name = name;
@@ -70,7 +72,10 @@ Shader::Shader(const std::string shaderName, std::string name)
 }
 // This activates the shader for following renders
 void Shader::use() {
-	glUseProgram(ID);
+	if (ID != GLCacheActiveShader) {
+		glUseProgram(ID);
+		GLCacheActiveShader = ID;
+	}
 }
 //This destroys the OpenGL shader program
 void Shader::cleanup() {

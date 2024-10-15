@@ -161,7 +161,7 @@ int main() {
 	cout << "Loading entities..." << endl;
 	//Default entities
 	float default_size = 0.25f;
-	int default_entities_n = 1;
+	int default_entities_n = 50;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
