@@ -112,88 +112,97 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\101_Xor.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\101_Xor.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\default.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\default.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\tutorial\01_basic.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\01_basic.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\02_vertexcolor.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\02_vertexcolor.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\03_uniformColor.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\03_uniformColor.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\04_basicTexture.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\04_basicTexture.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\05_textureMix.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\05_textureMix.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\06_usingTransform.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\06_usingTransform.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\07_usingProjection.frag">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
-    <None Include="Shaders\tutorial\07_usingProjection.vert">
-      <Filter>Resource Files\Shaders\tutorial</Filter>
-    </None>
     <None Include="TODO.txt" />
-    <None Include="Shaders\default_UV.frag">
+    <None Include="Assets\Shaders\101_Xor.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\default_UV.vert">
+    <None Include="Assets\Shaders\101_Xor.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\default_Normal.frag">
+    <None Include="Assets\Shaders\default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\default_Normal.vert">
+    <None Include="Assets\Shaders\default.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\default_Flat.vert">
+    <None Include="Assets\Shaders\default_Flat.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\default_Flat.frag">
+    <None Include="Assets\Shaders\default_Flat.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\default_Normal.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\default_Normal.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\default_UV.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\default_UV.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\01_basic.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\01_basic.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\02_vertexcolor.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\02_vertexcolor.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\03_uniformColor.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\03_uniformColor.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\04_basicTexture.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\04_basicTexture.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\05_textureMix.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\05_textureMix.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\06_usingTransform.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\06_usingTransform.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\07_usingProjection.frag">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
+    </None>
+    <None Include="Assets\Shaders\tutorial\07_usingProjection.vert">
+      <Filter>Resource Files\Shaders\tutorial</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\T_UV_02.jpg">
+    <Image Include="Assets\Textures\T_Noise_03a.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\T_UV_04.jpg">
+    <Image Include="Assets\Textures\T_Noise3_Median_01.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\T_UV_03.png">
+    <Image Include="Assets\Textures\T_UV_02.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\T_UV_03.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\T_UV_04.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\T_UV_04_smol.jpg">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>

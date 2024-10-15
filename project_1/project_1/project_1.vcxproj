@@ -117,6 +117,12 @@
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)\$(ProjectName)\Assets\*.*" "$(OutDir)Assets\" /s</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy the Assets folder to the target directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -165,36 +171,39 @@
     <ClInclude Include="UtilsNumbers.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\101_Xor.frag" />
-    <None Include="Shaders\101_Xor.vert" />
-    <None Include="Shaders\default.frag" />
-    <None Include="Shaders\default.vert" />
-    <None Include="Shaders\default_Flat.frag" />
-    <None Include="Shaders\default_Flat.vert" />
-    <None Include="Shaders\default_Normal.frag" />
-    <None Include="Shaders\default_Normal.vert" />
-    <None Include="Shaders\default_UV.frag" />
-    <None Include="Shaders\default_UV.vert" />
-    <None Include="Shaders\tutorial\01_basic.frag" />
-    <None Include="Shaders\tutorial\01_basic.vert" />
-    <None Include="Shaders\tutorial\02_vertexcolor.frag" />
-    <None Include="Shaders\tutorial\02_vertexcolor.vert" />
-    <None Include="Shaders\tutorial\03_uniformColor.frag" />
-    <None Include="Shaders\tutorial\03_uniformColor.vert" />
-    <None Include="Shaders\tutorial\04_basicTexture.frag" />
-    <None Include="Shaders\tutorial\04_basicTexture.vert" />
-    <None Include="Shaders\tutorial\05_textureMix.frag" />
-    <None Include="Shaders\tutorial\05_textureMix.vert" />
-    <None Include="Shaders\tutorial\06_usingTransform.frag" />
-    <None Include="Shaders\tutorial\06_usingTransform.vert" />
-    <None Include="Shaders\tutorial\07_usingProjection.frag" />
-    <None Include="Shaders\tutorial\07_usingProjection.vert" />
+    <None Include="Assets\Shaders\101_Xor.frag" />
+    <None Include="Assets\Shaders\101_Xor.vert" />
+    <None Include="Assets\Shaders\default.frag" />
+    <None Include="Assets\Shaders\default.vert" />
+    <None Include="Assets\Shaders\default_Flat.frag" />
+    <None Include="Assets\Shaders\default_Flat.vert" />
+    <None Include="Assets\Shaders\default_Normal.frag" />
+    <None Include="Assets\Shaders\default_Normal.vert" />
+    <None Include="Assets\Shaders\default_UV.frag" />
+    <None Include="Assets\Shaders\default_UV.vert" />
+    <None Include="Assets\Shaders\tutorial\01_basic.frag" />
+    <None Include="Assets\Shaders\tutorial\01_basic.vert" />
+    <None Include="Assets\Shaders\tutorial\02_vertexcolor.frag" />
+    <None Include="Assets\Shaders\tutorial\02_vertexcolor.vert" />
+    <None Include="Assets\Shaders\tutorial\03_uniformColor.frag" />
+    <None Include="Assets\Shaders\tutorial\03_uniformColor.vert" />
+    <None Include="Assets\Shaders\tutorial\04_basicTexture.frag" />
+    <None Include="Assets\Shaders\tutorial\04_basicTexture.vert" />
+    <None Include="Assets\Shaders\tutorial\05_textureMix.frag" />
+    <None Include="Assets\Shaders\tutorial\05_textureMix.vert" />
+    <None Include="Assets\Shaders\tutorial\06_usingTransform.frag" />
+    <None Include="Assets\Shaders\tutorial\06_usingTransform.vert" />
+    <None Include="Assets\Shaders\tutorial\07_usingProjection.frag" />
+    <None Include="Assets\Shaders\tutorial\07_usingProjection.vert" />
     <None Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\T_UV_02.jpg" />
-    <Image Include="Textures\T_UV_03.png" />
-    <Image Include="Textures\T_UV_04.jpg" />
+    <Image Include="Assets\Textures\T_Noise3_Median_01.png" />
+    <Image Include="Assets\Textures\T_Noise_03a.png" />
+    <Image Include="Assets\Textures\T_UV_02.jpg" />
+    <Image Include="Assets\Textures\T_UV_03.png" />
+    <Image Include="Assets\Textures\T_UV_04.jpg" />
+    <Image Include="Assets\Textures\T_UV_04_smol.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

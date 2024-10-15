@@ -1,6 +1,6 @@
 constexpr char DEFAULT_SHADER_PATH[] = "default";
-constexpr char DEFAULT_TEXTURE_PATH[] = "Textures/T_UV_02.jpg";
-char DEFAULT_MODEL_PATH[] = "Models/suzanne/suzanne_smooth.obj";
+constexpr char DEFAULT_TEXTURE_PATH[] = "Assets/Textures/T_UV_02.jpg";
+char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
 
 #include "Entity.h"
 #include <GLFW/glfw3.h>
@@ -26,6 +26,11 @@ void Entity::Update() {
 	float time = glfwGetTime();
 	glm::vec3 rotSpeed = glm::vec3(0.0f, 45.0f, 0.0f);
 	rotation = glm::quat(glm::radians(time * rotSpeed));
+	//TODO HACK this is just to emulate Update computation
+	//int n = 0;
+	//for (int i = 0; i < 9990000;i++) {
+	//	n++;
+	//}
 }
 
 void Entity::Render(glm::mat4 projection, glm::mat4 view){

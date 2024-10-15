@@ -65,7 +65,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, std::string nam
 	glDeleteShader(fragment);
 }
 Shader::Shader(const std::string shaderName, std::string name)
-	: Shader(("Shaders/" + shaderName + ".vert").c_str(), ("Shaders/" + shaderName + ".frag").c_str(), name) {
+	: Shader(("Assets/Shaders/" + shaderName + ".vert").c_str(), ("Assets/Shaders/" + shaderName + ".frag").c_str(), name) {
 
 }
 // This activates the shader for following renders

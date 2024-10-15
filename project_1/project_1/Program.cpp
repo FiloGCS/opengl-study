@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <vector>
+#include <stdlib.h>
 //GLFW for window control and glad for OpenGL functions
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,13 +29,14 @@
 //GLOBAL VARIABLES-------------------------
 //Window
 ImVec4 clear_color = ImVec4(0.15f, 0.16f, 0.13f, 1.00f);
-int window_width = 1280;
-int window_height = 720;
+int window_width = 1920;
+int window_height = 1080;
 //Engine
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 std::vector<Entity> entities;
 std::vector<Light> lights;
+bool use_vSync = true;
 //Camera
 Camera camera;
 float cameraSpeed = 1;
@@ -57,6 +59,7 @@ struct frameInfo {
 };
 unsigned int frame = 0;
 std::vector<frameInfo> frameHistory;
+unsigned int frameHistoryMaxSize = 180;
 
 std::vector<Shader*> loadedShaders;
 static int selectedShader = 0;
@@ -157,10 +160,17 @@ int main() {
 	double t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
 	//Default entities
+	float default_size = 0.25f;
 	int default_entities_n = 1;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
+	}
+	//Set entities size
+	for (int i = 0; i < entities.size(); i++) {
+		entities[i].scale *= default_size;
+		glm::vec3 randomOffset = glm::vec3(rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f);
+		entities[i].position += randomOffset;
 	}
 	//Specific entities
 
@@ -190,11 +200,18 @@ int main() {
 	t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
-	//ENABLE VSYNC
-	glfwSwapInterval(3);
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
+
+		//HACK ENABLE VSYNC in the loop for debug purposes
+		if (use_vSync) {
+			glfwSwapInterval(3);
+		}
+		else {
+			glfwSwapInterval(0);
+		}
+
 		//Update frame information
 		frameInfo currentFrameInfo;
 		float currentFrame = glfwGetTime();
@@ -269,7 +286,6 @@ int main() {
 				//Setting engine uniforms
 				shader->setVector2("resolution", window_width, window_height);
 				shader->setFloat("time", glfwGetTime());
-				drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
 				//Setting lighting uniforms
 				shader->setVector3("ambient_color", ambient_color);
 				shader->setVector3("point1_position", point1_position);
@@ -277,6 +293,7 @@ int main() {
 				shader->setFloat("point1_falloff", point1_falloff);
 				//Render
 				entity->Render(projection, view, shader);
+				//Show Debug info
 			}
 		}
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0)*1000;
@@ -289,7 +306,7 @@ int main() {
 		//Save this frame's info
 		currentFrameInfo.frameTime = (glfwGetTime() - currentFrameInfo.time);
 		frameHistory.push_back(currentFrameInfo);
-		if (frameHistory.size() > 120) {
+		if (frameHistory.size() > frameHistoryMaxSize) {
 			frameHistory.erase(frameHistory.begin());
 		}
 
@@ -298,6 +315,7 @@ int main() {
 			ImGui::ShowDemoWindow(&show_demo_window);
 		}*/
 		drawImGuiWindow_stats(window);
+		drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
 
 
 		ImGui::Render();
@@ -374,7 +392,15 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
 	ImGui::SeparatorText("Camera");
 	ImGui::InputFloat3("Position", &(camera.position[0]));
+	ImGui::Checkbox("vSync", &use_vSync);
 	ImGui::SeparatorText("Shader Picker");
+	//Current Shader info
+	std::ostringstream oss;
+	GLint binaryLength;
+	glGetProgramiv(loadedShaders.at(selectedShader)->ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+	oss << "(" <<binaryLength << " bytes) - " << loadedShaders.at(selectedShader)->name;
+	ImGui::Text(oss.str().c_str());
+
 	int buttons_per_line = 3;
 	for (int i = 0; i < loadedShaders.size(); i++) {
 		ImGui::RadioButton(loadedShaders.at(i)->name.c_str(), &selectedShader, i);
