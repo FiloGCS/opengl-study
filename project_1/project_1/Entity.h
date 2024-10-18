@@ -26,7 +26,7 @@ public:
 	glm::vec3 scale;
 
 	Model model;
-	Shader shader;
+	Shader* shader;
 
 	Entity();
 	void Start();
@@ -40,7 +40,7 @@ public:
 	void setPosition(const glm::vec3& position);
 	void setScale(const glm::vec3& scale);
 
-	void setShader(Shader newShader);
+	void setShader(Shader* newShader);
 
 
 };

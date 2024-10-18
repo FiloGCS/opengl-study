@@ -13,7 +13,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-enum ShaderType {Opaque, Translucent};
+enum ShaderBlendMode {Opaque, Translucent};
 
 class Shader {
 
@@ -24,10 +24,10 @@ class Shader {
 	// 3 - Normals
 
 public:
+	std::string name;
 	// the shader program OpenGL ID
 	unsigned int ID;
-	std::string name;
-	ShaderType type;
+	ShaderBlendMode blendMode;
 	static int GLCacheActiveShader;
 
 	//---CONSTRUCTORS

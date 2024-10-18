@@ -5,8 +5,7 @@ char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
 #include "Entity.h"
 #include <GLFW/glfw3.h>
 Entity::Entity()
-	: model(DEFAULT_MODEL_PATH),
-	shader(DEFAULT_SHADER_PATH, "Default Shader") {
+	: model(DEFAULT_MODEL_PATH){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
@@ -34,15 +33,15 @@ void Entity::Update() {
 }
 
 void Entity::Render(glm::mat4 projection, glm::mat4 view){
-	shader.use();
+	shader->use();
 	//TODO - set all the uniforms like in Program.cpp
-	shader.setInt("u_texture1", 0);
-	shader.setInt("u_texture2", 1);
-	shader.setMat4("model", getModelMatrix());
-	shader.setMat4("view", view);
-	shader.setMat4("projection", projection);
+	shader->setInt("u_texture1", 0);
+	shader->setInt("u_texture2", 1);
+	shader->setMat4("model", getModelMatrix());
+	shader->setMat4("view", view);
+	shader->setMat4("projection", projection);
 
-	model.Draw(shader); //TODO is copying shader?
+	model.Draw(*shader); //TODO is copying shader?
 
 }
 
@@ -83,9 +82,9 @@ void Entity::setScale(const glm::vec3& scale){
 	this->scale = scale;
 }
 
-void Entity::setShader(Shader newShader) {
+void Entity::setShader(Shader* newShader) {
 	//TODO do I need to cleanup the previous one here?
-	shader = std::move(newShader);
+	shader = newShader;
 }
 
 

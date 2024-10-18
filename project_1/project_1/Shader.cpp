@@ -18,6 +18,7 @@ int Shader::GLCacheActiveShader = -1;
 // Constructor generates the shader on the fly
 Shader::Shader(const char* vertexPath, const char* fragmentPath, std::string name) {
 	this->name = name;
+	this->blendMode = Opaque;
 	//1. Retrieve the vertex/fragment source code from filePath
 	//TODO - understand fstreams, strings and all these things in C++
 	std::string vertexCode;

@@ -156,30 +156,41 @@ int main() {
 	//Setup Camera
 	camera = Camera(glm::vec3(0.0f, 0.0f, -4.0f));
 
-	//ADD ENTITIES-------------
+
+	//COMPILING SHADERS...
 	double t0 = glfwGetTime();
+	cout << "Compiling shaders...\t";
+	Shader shader1 = Shader("default", "Entity Shader");
+	loadedShaders.push_back(&shader1);
+	Shader shader4 = Shader("default_Flat", "Flat Shading");
+	loadedShaders.push_back(&shader4);
+	Shader shader2 = Shader("default_UV", "UV");
+	loadedShaders.push_back(&shader2);
+	Shader shader3 = Shader("default_Normal", "World Normal");
+	loadedShaders.push_back(&shader3);
+	double t1 = glfwGetTime();
+	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
+
+
+	//ADD ENTITIES-------------
+	t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
 	//Creating default shader
-	Shader *defaultShader = new Shader("default", "My Default Shader");
 	//Default entities
 	float default_size = 0.2f;
-	int default_entities_n = 10;
+	int default_entities_n = 1000;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
-		//entities.back().shader(defaultShader);
+		entities.back().shader = loadedShaders[0];
 	}
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].scale *= default_size;
 		glm::vec3 randomOffset = glm::vec3(rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f);
 		entities[i].position += randomOffset;
 	}
-	////Specific entities
-	//entities.emplace_back();
-	//entities.back().name = "My Monkey";
 
-
-	double t1 = glfwGetTime();
+	t1 = glfwGetTime();
 	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
 	//Launch Start for all entities
@@ -191,26 +202,12 @@ int main() {
 	Light point1 = Light(point1_position, "point1");
 	lights.push_back(point1);
 
-	//COMPILING SHADERS...
-	t0 = glfwGetTime();
-	cout << "Compiling shaders...\t";
-	Shader shader1 = Shader("default", "Entity Shader");
-	loadedShaders.push_back(&shader1);
-	Shader shader4 = Shader("default_Flat", "Flat Shading");
-	loadedShaders.push_back(&shader4);
-	Shader shader2 = Shader("default_UV", "UV");
-	loadedShaders.push_back(&shader2);
-	Shader shader3 = Shader("default_Normal", "World Normal");
-	loadedShaders.push_back(&shader3);
-	t1 = glfwGetTime();
-	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
-
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
 
 		//HACK ENABLE VSYNC in the loop for debug purposes
 		if (use_vSync) {
-			glfwSwapInterval(4);
+			glfwSwapInterval(1);
 		}
 		else {
 			glfwSwapInterval(0);
@@ -270,6 +267,7 @@ int main() {
 
 		//RENDER OPAQUE
 		double tRender0 = glfwGetTime();
+		glDisable(GL_BLEND);
 		GLuint queryID;//Preparing OpenGL Query to measure render time
 		glGenQueries(1, &queryID);
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
@@ -281,7 +279,7 @@ int main() {
 			}
 			if (!onlyDrawSelectedEntity || selectedEntity == i) {
 				//Load the material's shader, or the selected debug material
-				Shader* shader = &(entity->shader);
+				Shader* shader = (entity->shader);
 				if (selectedShader != 0) {
 					shader = loadedShaders.at(selectedShader);
 				}
