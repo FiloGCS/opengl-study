@@ -123,6 +123,10 @@
     <PostBuildEvent>
       <Message>Copy the Assets folder to the target directory</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>rmdir /s /q "$(OutDir)Assets"</Command>
+      <Message>Remove Assets folder</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -171,6 +175,8 @@
     <ClInclude Include="UtilsNumbers.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\x64\Debug\Assets\Shaders\basic_translucent.frag" />
+    <None Include="..\x64\Debug\Assets\Shaders\basic_translucent.vert" />
     <None Include="Assets\Shaders\101_Xor.frag" />
     <None Include="Assets\Shaders\101_Xor.vert" />
     <None Include="Assets\Shaders\default.frag" />

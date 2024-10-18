@@ -8,10 +8,13 @@ PENDING:
 	-Support multiple objects in a scene, or a scene, in general...
 		-Add XYZ lines and maybe a gizmo?
 	-Add Transparent objects in a different pass
+	-Generate a list of models to be rendered, separate from the entities list
+		-Order it by shader.
 OPTIMIZING:
 	-Each entity is creating it's own version of the default shader, creating unnecessary glUseProgram calls
 
 BUGS:
 
 WISHLIST:
+	Add a gizmo
 	Add some gradient to the background (skybox shader?)

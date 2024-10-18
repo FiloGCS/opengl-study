@@ -185,6 +185,12 @@
     <None Include="Assets\Shaders\tutorial\07_usingProjection.vert">
       <Filter>Resource Files\Shaders\tutorial</Filter>
     </None>
+    <None Include="..\x64\Debug\Assets\Shaders\basic_translucent.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\Shaders\basic_translucent.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\T_Noise_03a.png">

@@ -1,6 +1,6 @@
 constexpr char DEFAULT_SHADER_PATH[] = "default";
-constexpr char DEFAULT_TEXTURE_PATH[] = "Assets/Textures/T_UV_02.jpg";
-char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
+//char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
+char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
 
 #include "Entity.h"
 #include <GLFW/glfw3.h>

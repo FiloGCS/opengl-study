@@ -19,6 +19,7 @@
 class Entity {
 
 public:
+	string name;
 
 	glm::vec3 position;
 	glm::quat rotation;

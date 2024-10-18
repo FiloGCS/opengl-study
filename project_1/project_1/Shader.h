@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+enum ShaderType {Opaque, Translucent};
+
 class Shader {
 
 	//Moving forward, for vertex attributes we're going to try to adhere to:
@@ -25,6 +27,7 @@ public:
 	// the shader program OpenGL ID
 	unsigned int ID;
 	std::string name;
+	ShaderType type;
 	static int GLCacheActiveShader;
 
 	//---CONSTRUCTORS

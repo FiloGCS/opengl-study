@@ -44,6 +44,7 @@ void main(){
 
 
 	FragColor = texture(u_texture1, texCoord) * lights;
+	FragColor = vec4(FragColor.xyz,0.5f);
 	//FragColor = vec4(1,1,1,1) * lights;
 
 	//FragColor = vec4(gl_FragCoord.x/resolution.x,gl_FragCoord.y/resolution.y,0,1);

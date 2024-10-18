@@ -159,20 +159,25 @@ int main() {
 	//ADD ENTITIES-------------
 	double t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
+	//Creating default shader
+	Shader *defaultShader = new Shader("default", "My Default Shader");
 	//Default entities
-	float default_size = 0.25f;
-	int default_entities_n = 50;
+	float default_size = 0.2f;
+	int default_entities_n = 10;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
+		//entities.back().shader(defaultShader);
 	}
-	//Set entities size
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].scale *= default_size;
 		glm::vec3 randomOffset = glm::vec3(rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f);
 		entities[i].position += randomOffset;
 	}
-	//Specific entities
+	////Specific entities
+	//entities.emplace_back();
+	//entities.back().name = "My Monkey";
+
 
 	double t1 = glfwGetTime();
 	cout << "Entities loaded in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
@@ -200,13 +205,12 @@ int main() {
 	t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
-
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
 
 		//HACK ENABLE VSYNC in the loop for debug purposes
 		if (use_vSync) {
-			glfwSwapInterval(3);
+			glfwSwapInterval(4);
 		}
 		else {
 			glfwSwapInterval(0);
@@ -265,7 +269,6 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//RENDER OPAQUE
-
 		double tRender0 = glfwGetTime();
 		GLuint queryID;//Preparing OpenGL Query to measure render time
 		glGenQueries(1, &queryID);
@@ -298,8 +301,10 @@ int main() {
 		}
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0)*1000;
 
-		//TODO - RENDER TRANSLUCENT
+		//RENDER TRANSLUCENT
 		// [...]
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 		//DEBUG
@@ -316,7 +321,6 @@ int main() {
 		}*/
 		drawImGuiWindow_stats(window);
 		drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
-
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -433,13 +437,15 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 void drawImGuiWindow_modelInfo(Entity* e) {
 	Model m = e->model;
 	ImGui::Begin("Entity inspector");
-
-	ImGui::SeparatorText("Selected:");
+	std::ostringstream oss;
+	oss << "Selected: " << entities[selectedEntity].name;
+	ImGui::SeparatorText(oss.str().c_str());
+	oss.str("");
+	oss.clear();
 	ImGui::InputInt("TO DO", &selectedEntity);
 	selectedEntity = selectedEntity % entities.size();
 	ImGui::Checkbox("Isolate selected", &onlyDrawSelectedEntity);
 	//Prepare stream
-	std::ostringstream oss;
 	//Transform
 	ImGui::SeparatorText("Transform");
 	ImGui::InputFloat3("Position", &(e->position[0]));
