@@ -37,6 +37,8 @@ float lastFrame = 0.0f;
 std::vector<Entity> entities;
 std::vector<Light> lights;
 bool use_vSync = true;
+bool use_opaque_pass = true;
+bool use_translucent_pass = true;
 //Camera
 Camera camera;
 float cameraSpeed = 1;
@@ -270,45 +272,76 @@ int main() {
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		//RENDER OPAQUE
+		//START RENDER ----------------------
 		double tRender0 = glfwGetTime();
-		glDisable(GL_BLEND);
 		GLuint queryID;//Preparing OpenGL Query to measure render time
 		glGenQueries(1, &queryID);
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
-		bool statsdrawn = false;
-		for (int i = 0; i < entities.size(); i++) {
-			Entity* entity = &entities.at(i);
-			if (selectedEntity == i) {
-				drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
-			}
-			if (!onlyDrawSelectedEntity || selectedEntity == i) {
-				//Load the material's shader, or the selected debug material
-				Shader* shader = (entity->shader);
-				if (selectedShader != 0) {
-					shader = loadedShaders.at(selectedShader);
+
+		drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
+
+		//RENDER OPAQUE
+		glDisable(GL_BLEND);
+		if (use_opaque_pass) {
+			for (int i = 0; i < entities.size(); i++) {
+				Entity* entity = &entities.at(i);
+				if (!onlyDrawSelectedEntity || selectedEntity == i) {
+					//Load the material's shader, or the selected debug material
+					Shader* shader = (entity->shader);
+					if (selectedShader != 0) {
+						shader = loadedShaders.at(selectedShader);
+					}
+					//If it's an opaque shader, render it
+					if (shader->blendMode == Opaque) {
+						shader->use();
+						//Setting engine uniforms
+						shader->setVector2("resolution", window_width, window_height);
+						shader->setFloat("time", glfwGetTime());
+						//Setting lighting uniforms
+						shader->setVector3("ambient_color", ambient_color);
+						shader->setVector3("point1_position", point1_position);
+						shader->setVector3("point1_color", point1_color);
+						shader->setFloat("point1_falloff", point1_falloff);
+						//Render
+						entity->Render(projection, view, shader);
+					}
 				}
-				shader->use();
-				//Setting engine uniforms
-				shader->setVector2("resolution", window_width, window_height);
-				shader->setFloat("time", glfwGetTime());
-				//Setting lighting uniforms
-				shader->setVector3("ambient_color", ambient_color);
-				shader->setVector3("point1_position", point1_position);
-				shader->setVector3("point1_color", point1_color);
-				shader->setFloat("point1_falloff", point1_falloff);
-				//Render
-				entity->Render(projection, view, shader);
-				//Show Debug info
 			}
 		}
-		currentFrameInfo.renderTime = (glfwGetTime() - tRender0)*1000;
 
 		//RENDER TRANSLUCENT
-		// [...]
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+		if (use_translucent_pass) {
+			//TODO - Sort Entities by camera distance?
+			//TODO - Loop through entities rendering translucent ones
+			for (int i = 0; i < entities.size(); i++) {
+				Entity* entity = &entities.at(i);
+				if (!onlyDrawSelectedEntity || selectedEntity == i) {
+					//Load the material's shader, or the selected debug material
+					Shader* shader = (entity->shader);
+					if (selectedShader != 0) {
+						shader = loadedShaders.at(selectedShader);
+					}
+					//If it's an opaque shader, render it
+					if (shader->blendMode == Translucent) {
+						shader->use();
+						//Setting engine uniforms
+						shader->setVector2("resolution", window_width, window_height);
+						shader->setFloat("time", glfwGetTime());
+						//Setting lighting uniforms
+						shader->setVector3("ambient_color", ambient_color);
+						shader->setVector3("point1_position", point1_position);
+						shader->setVector3("point1_color", point1_color);
+						shader->setFloat("point1_falloff", point1_falloff);
+						//Render
+						entity->Render(projection, view, shader);
+					}
+				}
+			}
+		}
+		//END RENDER ---------------------------
+		currentFrameInfo.renderTime = (glfwGetTime() - tRender0) * 1000;
 
 		//DEBUG
 		//Save this frame's info
@@ -400,6 +433,9 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::SeparatorText("Camera");
 	ImGui::InputFloat3("Position", &(camera.position[0]));
 	ImGui::Checkbox("vSync", &use_vSync);
+	ImGui::SeparatorText("Render passes");
+	ImGui::Checkbox("Opaque pass", &use_opaque_pass);
+	ImGui::Checkbox("Translucent pass", &use_translucent_pass);
 	ImGui::SeparatorText("Shader Picker");
 	//Current Shader info
 	std::ostringstream oss;
