@@ -1,17 +1,13 @@
-constexpr char DEFAULT_SHADER_PATH[] = "default";
-//char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
-char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
-
 #include "Entity.h"
 #include <GLFW/glfw3.h>
-Entity::Entity()
-	: model(DEFAULT_MODEL_PATH){
+Entity::Entity(){
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
 	rotation = glm::quat();
 
 	//Model
+	//Needs to be assigned outside
 	//Shader
 	//Already managed via the initializer list
 }
@@ -41,7 +37,7 @@ void Entity::Render(glm::mat4 projection, glm::mat4 view){
 	shader->setMat4("view", view);
 	shader->setMat4("projection", projection);
 
-	model.Draw(*shader); //TODO is copying shader?
+	model->Draw(*shader); //TODO is copying shader?
 
 }
 
@@ -55,7 +51,7 @@ void Entity::Render(glm::mat4 projection, glm::mat4 view, Shader* customShader)
 	customShader->setMat4("view", view);
 	customShader->setMat4("projection", projection);
 
-	model.Draw(*customShader); //TODO is copying shader?
+	model->Draw(*customShader); //TODO is copying shader?
 }
 
 glm::mat4 Entity::getModelMatrix(){

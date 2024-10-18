@@ -25,7 +25,7 @@ public:
 	glm::quat rotation;
 	glm::vec3 scale;
 
-	Model model;
+	Model* model;
 	Shader* shader;
 
 	Entity();

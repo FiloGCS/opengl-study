@@ -171,6 +171,10 @@ int main() {
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
+	//LOADING MODELS...
+	char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
+	//char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
+	Model defaultModel = Model(DEFAULT_MODEL_PATH);
 
 	//ADD ENTITIES-------------
 	t0 = glfwGetTime();
@@ -183,6 +187,7 @@ int main() {
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
 		entities.back().shader = loadedShaders[0];
+		entities.back().model = &defaultModel;
 	}
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].scale *= default_size;
@@ -433,7 +438,7 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::End();
 }
 void drawImGuiWindow_modelInfo(Entity* e) {
-	Model m = e->model;
+	Model m = *(e->model);
 	ImGui::Begin("Entity inspector");
 	std::ostringstream oss;
 	oss << "Selected: " << entities[selectedEntity].name;
