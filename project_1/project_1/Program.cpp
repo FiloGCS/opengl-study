@@ -129,7 +129,7 @@ int main() {
 	//HERE WE GO!-----------------------
 	glViewport(0, 0, window_width, window_height);
 	//STENCIL BUFFER
-	//glEnable(GL_STENCIL_TEST);
+	glEnable(GL_STENCIL_TEST);
 	//glDisable(GL_STENCIL_TEST);
 	glStencilMask(0xFF); // each bit is written to the stencil buffer as is
 	//glStencilMask(0x00); // each bit ends up as 0 in the stencil buffer (disabling writes)
@@ -152,12 +152,15 @@ int main() {
 	//this can be used to temporarily disable WRITING while still testing
 	//glDepthMask(GL_FALSE);
 
+	//FACE CULLING
+	glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
+
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
 
 	//Setup Camera
 	camera = Camera(glm::vec3(0.0f, 0.0f, -4.0f));
-
 
 	//COMPILING SHADERS...
 	double t0 = glfwGetTime();
@@ -188,7 +191,7 @@ int main() {
 	//Creating default shader
 	//Default entities
 	float default_size = 0.2f;
-	int default_entities_n = 50;
+	int default_entities_n = 20;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
