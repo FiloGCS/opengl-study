@@ -31,6 +31,12 @@
     <Filter Include="Resource Files\Shaders\Default Shaders">
       <UniqueIdentifier>{e3d92ac7-b75f-4814-b33d-d444ca3094fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\engine">
+      <UniqueIdentifier>{8e0d82fc-6771-4552-a158-54dea612e43d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\postprocess">
+      <UniqueIdentifier>{d4e3c4c5-df17-4ddd-a3af-f860e78b63c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -199,6 +205,18 @@
     </None>
     <None Include="Assets\Shaders\ghosted.frag">
       <Filter>Resource Files\Shaders\Default Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\postprocess\inversion.frag">
+      <Filter>Resource Files\Shaders\postprocess</Filter>
+    </None>
+    <None Include="Assets\Shaders\quad.frag">
+      <Filter>Resource Files\Shaders\engine</Filter>
+    </None>
+    <None Include="Assets\Shaders\quad.vert">
+      <Filter>Resource Files\Shaders\engine</Filter>
+    </None>
+    <None Include="Assets\Shaders\postprocess\grayscale.frag">
+      <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

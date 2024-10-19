@@ -189,6 +189,10 @@
     <None Include="Assets\Shaders\default_UV.vert" />
     <None Include="Assets\Shaders\ghosted.frag" />
     <None Include="Assets\Shaders\ghosted.vert" />
+    <None Include="Assets\Shaders\postprocess\grayscale.frag" />
+    <None Include="Assets\Shaders\postprocess\inversion.frag" />
+    <None Include="Assets\Shaders\quad.frag" />
+    <None Include="Assets\Shaders\quad.vert" />
     <None Include="Assets\Shaders\tutorial\01_basic.frag" />
     <None Include="Assets\Shaders\tutorial\01_basic.vert" />
     <None Include="Assets\Shaders\tutorial\02_vertexcolor.frag" />

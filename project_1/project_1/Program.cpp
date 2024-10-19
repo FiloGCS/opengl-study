@@ -39,6 +39,16 @@ std::vector<Light> lights;
 bool use_vSync = true;
 bool use_opaque_pass = true;
 bool use_translucent_pass = true;
+float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+	// positions   // texCoords
+	-1.0f,  1.0f,  0.0f, 1.0f,
+	-1.0f, -1.0f,  0.0f, 0.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+
+	-1.0f,  1.0f,  0.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	 1.0f,  1.0f,  1.0f, 1.0f
+};
 //Camera
 Camera camera;
 float cameraSpeed = 1;
@@ -162,6 +172,18 @@ int main() {
 	//Setup Camera
 	camera = Camera(glm::vec3(0.0f, 0.0f, -4.0f));
 
+	//Setup screen quad
+	unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER,quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 	//COMPILING SHADERS...
 	double t0 = glfwGetTime();
 	cout << "Compiling shaders...\t";
@@ -176,7 +198,7 @@ int main() {
 	Shader basic_translucent = Shader("basic_translucent", "Basic Translucent");
 	basic_translucent.blendMode = Translucent;
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
-
+	Shader postprocessShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Postprocess Shader");
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -220,6 +242,38 @@ int main() {
 	//ADD LIGHTS---------------
 	Light point1 = Light(point1_position, "point1");
 	lights.push_back(point1);
+
+
+	//FRAMEBUFFER TEST
+	//Creating framebuffer object
+	unsigned int framebuffer;
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	//generate texture attachment
+	unsigned int textureColorbuffer;
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//attach it to the currently bound framebuffer object as a color attachment
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+	//For depth-stencil attachment we can use a renderbuffer instead of texture since we don't need sampling
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, window_width, window_height);
+	//After allocating memory for our new renderbuffer, we can unbind it
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	//Finally we attach this depth-stencil renderbuffer attachment
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	//Check that the framebuffer is complete:
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	}
+	//Unbind the framebuffer, we don't want to accidentally render to it
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	/// START RENDER LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -280,9 +334,12 @@ int main() {
 		}
 		currentFrameInfo.updateTime = (glfwGetTime() - tUpdate0)*1000;
 
-		//CLEAR BUFFERS
+		//BIND OUR CUSTOM FRAMEBUFFER
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		//Clear buffer
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		//START RENDER ----------------------
 		double tRender0 = glfwGetTime();
@@ -365,8 +422,23 @@ int main() {
 			}
 		}
 		glDepthMask(GL_TRUE);
+
 		//END RENDER ---------------------------
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0) * 1000;
+
+		//BIND DEFAULT FRAMEBUFFER
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		//Use our quad shader
+		postprocessShader.use();
+		//TODO - We need to have a quadVAO created to be bound here
+		glBindVertexArray(quadVAO);
+		glDisable(GL_DEPTH_TEST); //We don't want the screen quad to depth test
+		glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //Since this is a texture attachment, we can use it
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
 
 		//DEBUG
 		//Save this frame's info
