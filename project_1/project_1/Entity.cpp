@@ -6,10 +6,10 @@ Entity::Entity(){
 	scale = glm::vec3(1, 1, 1);
 	rotation = glm::quat();
 
-	//Model
-	//Needs to be assigned outside
-	//Shader
-	//Already managed via the initializer list
+	isVisible = true;
+
+	//Model needs to be assigned outside
+	//Shader needs to be assigned outside
 }
 
 void Entity::Start()
@@ -83,5 +83,15 @@ void Entity::setShader(Shader* newShader) {
 	shader = newShader;
 }
 
+bool Entity::compareEntityByZ(const Entity& a, const Entity& b) {
+	return a.position.z < b.position.z;
+}
+bool compareEntityByShaderID(const Entity& a, const Entity& b) {
+	//This should sort the entities by shader blendMode and ID;
+	if (a.shader->blendMode != b.shader->blendMode) {
+		return a.shader->blendMode < b.shader->blendMode;
+	}
+	return a.shader->ID < b.shader->ID;
+}
 
 

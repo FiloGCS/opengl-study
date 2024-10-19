@@ -170,6 +170,10 @@ int main() {
 	loadedShaders.push_back(&shader2);
 	Shader shader3 = Shader("default_Normal", "World Normal");
 	loadedShaders.push_back(&shader3);
+	Shader basic_translucent = Shader("basic_translucent", "Basic Translucent");
+	basic_translucent.blendMode = Translucent;
+	Shader ghostedShader = Shader("ghosted", "Ghosted");
+
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -184,11 +188,16 @@ int main() {
 	//Creating default shader
 	//Default entities
 	float default_size = 0.2f;
-	int default_entities_n = 1000;
+	int default_entities_n = 50;
 	entities.reserve(default_entities_n);
 	for (int i = 0; i < default_entities_n; ++i) {
 		entities.emplace_back();
-		entities.back().shader = loadedShaders[0];
+		//Choose between opaque or translucent shader at random
+		if (rand() % 2 == 0) {
+			entities.back().shader = loadedShaders[0];
+		}else {
+			entities.back().shader = &basic_translucent;
+		}
 		entities.back().model = &defaultModel;
 	}
 	for (int i = 0; i < entities.size(); i++) {
@@ -285,26 +294,33 @@ int main() {
 		if (use_opaque_pass) {
 			for (int i = 0; i < entities.size(); i++) {
 				Entity* entity = &entities.at(i);
+				//Load the material's shader, or the selected debug material
+				Shader* shader;
 				if (!onlyDrawSelectedEntity || selectedEntity == i) {
-					//Load the material's shader, or the selected debug material
-					Shader* shader = (entity->shader);
+					//Load this entity's shader
+					shader = (entity->shader);
+					//If a debug shader is selected, use that one
 					if (selectedShader != 0) {
 						shader = loadedShaders.at(selectedShader);
 					}
-					//If it's an opaque shader, render it
-					if (shader->blendMode == Opaque) {
-						shader->use();
-						//Setting engine uniforms
-						shader->setVector2("resolution", window_width, window_height);
-						shader->setFloat("time", glfwGetTime());
-						//Setting lighting uniforms
-						shader->setVector3("ambient_color", ambient_color);
-						shader->setVector3("point1_position", point1_position);
-						shader->setVector3("point1_color", point1_color);
-						shader->setFloat("point1_falloff", point1_falloff);
-						//Render
-						entity->Render(projection, view, shader);
-					}
+				}
+				else {
+					//Load the Ghosted shader
+					shader = &ghostedShader;
+				}
+				//If it's an opaque shader, render it
+				if (shader->blendMode == Opaque) {
+					shader->use();
+					//Setting engine uniforms
+					shader->setVector2("resolution", window_width, window_height);
+					shader->setFloat("time", glfwGetTime());
+					//Setting lighting uniforms
+					shader->setVector3("ambient_color", ambient_color);
+					shader->setVector3("point1_position", point1_position);
+					shader->setVector3("point1_color", point1_color);
+					shader->setFloat("point1_falloff", point1_falloff);
+					//Render
+					entity->Render(projection, view, shader);
 				}
 			}
 		}
@@ -312,9 +328,14 @@ int main() {
 		//RENDER TRANSLUCENT
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_FALSE);
+		//glDepthMask(GL_FALSE);
 		if (use_translucent_pass) {
-			//TODO - Sort Entities by camera distance?
-			//TODO - Loop through entities rendering translucent ones
+			//Sort Entities by camera distance
+			//TODO - Ideally we would only sort translucent entities
+			std::sort(entities.begin(), entities.end(), &Entity::compareEntityByZ);
+
+			//Loop through entities rendering translucent ones
 			for (int i = 0; i < entities.size(); i++) {
 				Entity* entity = &entities.at(i);
 				if (!onlyDrawSelectedEntity || selectedEntity == i) {
@@ -340,6 +361,7 @@ int main() {
 				}
 			}
 		}
+		glDepthMask(GL_TRUE);
 		//END RENDER ---------------------------
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0) * 1000;
 

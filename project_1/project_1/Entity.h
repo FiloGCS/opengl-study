@@ -27,6 +27,7 @@ public:
 
 	Model* model;
 	Shader* shader;
+	bool isVisible;
 
 	Entity();
 	void Start();
@@ -41,6 +42,8 @@ public:
 	void setScale(const glm::vec3& scale);
 
 	void setShader(Shader* newShader);
+	static bool compareEntityByZ(const Entity& a, const Entity& b);
+	static bool compareEntityByShaderID(const Entity& a, const Entity& b);
 
 
 };
