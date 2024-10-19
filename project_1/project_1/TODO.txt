@@ -1,6 +1,7 @@
 PENDING:
 	-Add Light objects
-	-Add Camera movement
+	++++ Add Camera movement
+	+ Try making the HyperDemon double camera effect
 	-Rework the Entity class to work with our new capabilities
 		-Rework how shaders and materials work
 			Use some kind of default texture?

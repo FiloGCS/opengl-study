@@ -81,7 +81,10 @@ bool onlyDrawSelectedEntity = false;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 
+int main();
+
 //FUNCTION PROTOTYPES-----------------------
+void processInput(GLFWwindow* window, Camera* camera);
 //callback functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //ImGui window functions
@@ -103,7 +106,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // would be needed in MacOSX
-	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "OpenGL Program", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Real Engine", NULL, NULL);
 	if (!window) {
 		std::cerr << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -198,7 +201,7 @@ int main() {
 	Shader basic_translucent = Shader("basic_translucent", "Basic Translucent");
 	basic_translucent.blendMode = Translucent;
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
-	Shader postprocessShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Postprocess Shader");
+	Shader postprocessShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "Postprocess Shader");
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -297,26 +300,7 @@ int main() {
 
 		//UPDATE INPUT
 		glfwPollEvents();
-
-		glm::vec3 camera_move_direction = glm::vec3(0);
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			cout << "W" << endl;
-			camera_move_direction += glm::vec3(0, 0, 1);
-		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			cout << "A" << endl;
-			camera_move_direction += glm::vec3(1, 0, 0);
-		}
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			cout << "S" << endl;
-			camera_move_direction += glm::vec3(0, 0, -1);
-		}
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			cout << "D" << endl;
-			camera_move_direction += glm::vec3(-1, 0, 0);
-		}
-		//camera_move_direction = glm::normalize(camera_move_direction);
-		camera.position += camera_move_direction * deltaTime;
+		processInput(window, &camera);
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -473,6 +457,42 @@ int main() {
 	return 0;
 }
 
+//Input functions
+void processInput(GLFWwindow* window, Camera* cam) {
+	glm::vec3 camera_move_direction = glm::vec3(0);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cout << "W" << endl;
+		camera_move_direction += glm::vec3(0, 0, 1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cout << "A" << endl;
+		camera_move_direction += glm::vec3(1, 0, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		cout << "S" << endl;
+		camera_move_direction += glm::vec3(0, 0, -1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cout << "D" << endl;
+		camera_move_direction += glm::vec3(-1, 0, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		cout << "E" << endl;
+		glm::quat rot = glm::angleAxis(glm::radians(180 * deltaTime), glm::vec3(0, 01, 0));
+		cam->rotation = rot * cam->rotation;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		cout << "Q" << endl;
+		glm::quat rot = glm::angleAxis(glm::radians(-180 * deltaTime), glm::vec3(0, 01, 0));
+		cam->rotation = rot * cam->rotation;
+	}
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		cout << "F" << endl;
+		cam->position = glm::vec3(0.0f, 0.0f, -4.0f);
+	}
+	//camera_move_direction = glm::normalize(camera_move_direction);
+	cam->position += camera_move_direction * deltaTime;
+}
 //Callback functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
