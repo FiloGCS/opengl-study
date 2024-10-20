@@ -13,18 +13,18 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 //My includes
-#include "Shader.h"
-#include "Texture2D.h"
-#include "Entity.h"
+#include "Core/Shader.h"
+#include "Core/Texture2D.h"
+#include "Core/Entity.h"
+#include "Core/Model.h"
+#include "Core/Light.h"
+#include "Core/Camera.h"
+#include "Utils/UtilsNumbers.h"
 //stb_image library handles image loading
 //This needs to be last since we're #including stb_image.h in previous includes
 // and we can only implement it once!
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "Model.h"
-#include "Utils/UtilsNumbers.h"
-#include "Light.h"
-#include "Camera.h"
 
 //GLOBAL VARIABLES-------------------------
 //Window

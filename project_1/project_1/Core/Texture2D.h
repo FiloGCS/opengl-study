@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "stb_image.h"
+#include "../stb_image.h"
 
 class Texture2D {
 public:

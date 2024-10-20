@@ -152,26 +152,26 @@
     <ClCompile Include="..\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Core\Light.cpp" />
+    <ClCompile Include="Core\Mesh.cpp" />
+    <ClCompile Include="Core\Entity.cpp" />
+    <ClCompile Include="Core\Model.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="Core\Shader.cpp" />
+    <ClCompile Include="Core\Texture2D.cpp" />
     <ClCompile Include="Utils\UtilsNumbers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\Light.h" />
+    <ClInclude Include="Core\Mesh.h" />
+    <ClInclude Include="Core\Entity.h" />
+    <ClInclude Include="Core\Model.h" />
+    <ClInclude Include="Core\Shader.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Core\Texture2D.h" />
     <ClInclude Include="Utils\UtilsNumbers.h" />
   </ItemGroup>
   <ItemGroup>
