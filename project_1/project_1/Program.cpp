@@ -204,9 +204,9 @@ int main() {
 	shaderBasicTranslucent.blendMode = Translucent;
 	//Debug Shaders
 	//TODO - should redo the system, having the default in loadedShaders[0] doesn't make much sense...
-	Shader shader2 = Shader("default_UV", "UV");
-	Shader shader3 = Shader("default_Normal", "World Normal");
-	Shader shader4 = Shader("default_Flat", "Flat Shading");
+	Shader shader2 = Shader("debug/debug_uv", "TexCoord");
+	Shader shader3 = Shader("debug/debug_normal", "World Normal");
+	Shader shader4 = Shader("debug/debug_flat", "Flat");
 	loadedShaders.push_back(&shaderBasicOpaque);
 	loadedShaders.push_back(&shader2);
 	loadedShaders.push_back(&shader3);
@@ -215,9 +215,9 @@ int main() {
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
 	//Postprocess shaders
 	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert","Assets/Shaders/quad.frag", "No effects");
-	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Blur.frag", "Blur");
-	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Sharpen.frag", "Sharpen");
-	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Edges.frag", "Edges");
+	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/blur.frag", "Blur");
+	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/sharpen.frag", "Sharpen");
+	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/edges.frag", "Edges");
 	Shader postprocessShader5 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Grayscale");
 	Shader postprocessShader6 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/inversion.frag", "Invert");
 	loadedPostprocessShaders.push_back(&postprocessShader1);

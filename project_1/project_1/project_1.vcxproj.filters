@@ -28,17 +28,20 @@
     <Filter Include="Source Files\myUtils">
       <UniqueIdentifier>{f35b73f9-c116-437a-a085-340eb1f362a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Default Shaders">
-      <UniqueIdentifier>{e3d92ac7-b75f-4814-b33d-d444ca3094fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Shaders\engine">
-      <UniqueIdentifier>{8e0d82fc-6771-4552-a158-54dea612e43d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\postprocess">
       <UniqueIdentifier>{d4e3c4c5-df17-4ddd-a3af-f860e78b63c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Shaders\old">
       <UniqueIdentifier>{0e26347b-c71e-4dac-b5fe-32767a758e21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Debug Shaders">
+      <UniqueIdentifier>{9c1a6800-d2a6-43e6-be23-c9bad0dda7cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Basic">
+      <UniqueIdentifier>{e3d92ac7-b75f-4814-b33d-d444ca3094fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Engine">
+      <UniqueIdentifier>{8e0d82fc-6771-4552-a158-54dea612e43d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,7 +127,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TODO.txt" />
     <None Include="Assets\Shaders\101_Xor.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
@@ -174,64 +176,64 @@
       <Filter>Resource Files\Shaders\tutorial</Filter>
     </None>
     <None Include="Assets\Shaders\basic_opaque.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
+      <Filter>Resource Files\Shaders\Basic</Filter>
     </None>
     <None Include="Assets\Shaders\basic_opaque.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_Flat.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_Flat.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_Normal.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_Normal.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_UV.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\default_UV.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
+      <Filter>Resource Files\Shaders\Basic</Filter>
     </None>
     <None Include="Assets\Shaders\basic_translucent.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
+      <Filter>Resource Files\Shaders\Basic</Filter>
     </None>
     <None Include="Assets\Shaders\basic_translucent.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\ghosted.vert">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\ghosted.frag">
-      <Filter>Resource Files\Shaders\Default Shaders</Filter>
+      <Filter>Resource Files\Shaders\Basic</Filter>
     </None>
     <None Include="Assets\Shaders\postprocess\inversion.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
     <None Include="Assets\Shaders\quad.frag">
-      <Filter>Resource Files\Shaders\engine</Filter>
+      <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
     <None Include="Assets\Shaders\quad.vert">
-      <Filter>Resource Files\Shaders\engine</Filter>
+      <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
     <None Include="Assets\Shaders\postprocess\grayscale.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
     <None Include="Assets\Shaders\skybox.frag">
-      <Filter>Resource Files\Shaders\engine</Filter>
+      <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
-    <None Include="Assets\Shaders\postprocess\Blur.frag">
+    <None Include="Assets\Shaders\postprocess\blur.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\postprocess\Edges.frag">
+    <None Include="Assets\Shaders\postprocess\edges.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\postprocess\Sharpen.frag">
+    <None Include="Assets\Shaders\postprocess\sharpen.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_flat.frag">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_flat.vert">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_normal.frag">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_normal.vert">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_uv.frag">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\debug\debug_uv.vert">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\ghosted.frag">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\ghosted.vert">
+      <Filter>Resource Files\Shaders\Debug Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

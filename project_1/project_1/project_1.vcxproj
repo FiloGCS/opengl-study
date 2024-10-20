@@ -181,17 +181,17 @@
     <None Include="Assets\Shaders\basic_translucent.vert" />
     <None Include="Assets\Shaders\basic_opaque.frag" />
     <None Include="Assets\Shaders\basic_opaque.vert" />
-    <None Include="Assets\Shaders\default_Flat.frag" />
-    <None Include="Assets\Shaders\default_Flat.vert" />
-    <None Include="Assets\Shaders\default_Normal.frag" />
-    <None Include="Assets\Shaders\default_Normal.vert" />
-    <None Include="Assets\Shaders\default_UV.frag" />
-    <None Include="Assets\Shaders\default_UV.vert" />
+    <None Include="Assets\Shaders\debug\debug_flat.frag" />
+    <None Include="Assets\Shaders\debug\debug_flat.vert" />
+    <None Include="Assets\Shaders\debug\debug_normal.frag" />
+    <None Include="Assets\Shaders\debug\debug_normal.vert" />
+    <None Include="Assets\Shaders\debug\debug_uv.frag" />
+    <None Include="Assets\Shaders\debug\debug_uv.vert" />
     <None Include="Assets\Shaders\ghosted.frag" />
     <None Include="Assets\Shaders\ghosted.vert" />
-    <None Include="Assets\Shaders\postprocess\Blur.frag" />
-    <None Include="Assets\Shaders\postprocess\Sharpen.frag" />
-    <None Include="Assets\Shaders\postprocess\Edges.frag" />
+    <None Include="Assets\Shaders\postprocess\blur.frag" />
+    <None Include="Assets\Shaders\postprocess\sharpen.frag" />
+    <None Include="Assets\Shaders\postprocess\edges.frag" />
     <None Include="Assets\Shaders\postprocess\grayscale.frag" />
     <None Include="Assets\Shaders\postprocess\inversion.frag" />
     <None Include="Assets\Shaders\quad.frag" />
@@ -211,7 +211,6 @@
     <None Include="Assets\Shaders\tutorial\06_usingTransform.vert" />
     <None Include="Assets\Shaders\tutorial\07_usingProjection.frag" />
     <None Include="Assets\Shaders\tutorial\07_usingProjection.vert" />
-    <None Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\T_Noise3_Median_01.png" />
