@@ -1,11 +1,10 @@
 #version 330 core
+in vec2 TexCoords;
 out vec4 FragColor;
   
-in vec2 TexCoords;
-//Engine
+//Uniforms
 uniform vec2 resolution;
 uniform float time;
-
 uniform sampler2D screenTexture;
 
 const float PHI = 1.61803398874989484820459; // Golden ratio
