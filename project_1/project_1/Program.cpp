@@ -198,7 +198,7 @@ int main() {
 	//COMPILING SHADERS...
 	double t0 = glfwGetTime();
 	cout << "Compiling shaders...\t";
-	//Default shaders
+	//Basic shaders
 	Shader shaderBasicOpaque = Shader("basic_opaque", "Entity Shader");
 	Shader shaderBasicTranslucent = Shader("basic_translucent", "Basic Translucent");
 	shaderBasicTranslucent.blendMode = Translucent;
@@ -211,15 +211,18 @@ int main() {
 	loadedShaders.push_back(&shader2);
 	loadedShaders.push_back(&shader3);
 	loadedShaders.push_back(&shader4);
-	//Ghosted shader
-	Shader ghostedShader = Shader("ghosted", "Ghosted");
+	//Engine shaders
+	string quadShaderPath = "Assets/Shaders/engine/quad.vert";
+	Shader ghostedShader = Shader("engine/ghosted", "Ghosted");
 	//Postprocess shaders
-	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert","Assets/Shaders/quad.frag", "No effects");
-	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/blur.frag", "Blur");
-	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/sharpen.frag", "Sharpen");
-	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/edges.frag", "Edges");
-	Shader postprocessShader5 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Grayscale");
-	Shader postprocessShader6 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/inversion.frag", "Invert");
+	string postprocessPath = "Assets/Shaders/postprocess/";
+	//TODO - Could do with a for loop?
+	Shader postprocessShader1 = Shader(quadShaderPath, postprocessPath+"none.frag", "None");
+	Shader postprocessShader2 = Shader(quadShaderPath, postprocessPath+"blur.frag", "Blur");
+	Shader postprocessShader3 = Shader(quadShaderPath, postprocessPath+"sharpen.frag", "Sharpen");
+	Shader postprocessShader4 = Shader(quadShaderPath, postprocessPath+"edges.frag", "Edges");
+	Shader postprocessShader5 = Shader(quadShaderPath, postprocessPath+"grayscale.frag", "Grayscale");
+	Shader postprocessShader6 = Shader(quadShaderPath, postprocessPath+"inversion.frag", "Invert");
 	loadedPostprocessShaders.push_back(&postprocessShader1);
 	loadedPostprocessShaders.push_back(&postprocessShader2);
 	loadedPostprocessShaders.push_back(&postprocessShader3);
@@ -227,20 +230,16 @@ int main() {
 	loadedPostprocessShaders.push_back(&postprocessShader5);
 	loadedPostprocessShaders.push_back(&postprocessShader6);
 	//Skybox shaders
-	Shader skyboxShader = Shader(
-		"Assets/Shaders/quad.vert",
-		"Assets/Shaders/skybox.frag",
-		"Skybox Shader"
-	);
+	string skyboxPath = "Assets/Shaders/skybox/";
+	Shader skyboxShader = Shader(quadShaderPath, skyboxPath+"gradient_01.frag", "Gradient Background");
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
-	//LOADING MODELS...
+	//LOADING MODELS
 	char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
-	//char DEFAULT_MODEL_PATH[] = "Assets/Models/suzanne/suzanne_smooth.obj";
 	Model defaultModel = Model(DEFAULT_MODEL_PATH);
 
-	//ADD ENTITIES-------------
+	//CREATE ENTITIES
 	t0 = glfwGetTime();
 	cout << "Loading entities..." << endl;
 	//Creating default shader
@@ -248,25 +247,19 @@ int main() {
 	float default_size = 0.2f;
 	int default_entities_n = 20;
 	entities.reserve(default_entities_n);
+	//For each desired entity
 	for (int i = 0; i < default_entities_n; ++i) {
+		//Create a new Entity in the entities vector
 		entities.emplace_back();
-		//Choose between opaque or translucent shader at random
-		if (rand() % 2 == 0) {
-			entities.back().shader = &shaderBasicOpaque;
-		}
-		else {
-			entities.back().shader = &shaderBasicTranslucent;
-		}
+		//Use the default model
 		entities.back().model = &defaultModel;
-	}
-	for (int i = 0; i < entities.size(); i++) {
-		entities[i].scale *= default_size;
-		glm::vec3 randomOffset = glm::vec3(
-			rand() % 100 * 0.01f - 0.5f,
-			rand() % 100 * 0.01f - 0.5f,
-			rand() % 100 * 0.01f - 0.5f
-		);
-		entities[i].position += randomOffset;
+		//Scale them by the default scale
+		entities.back().scale *= default_size;
+		//Randomize the position
+		glm::vec3 randomOffset = UtilsNumbers::getRandomOffset();
+		entities.back().position += randomOffset;
+		//Choose between opaque or translucent shader at random
+		entities.back().shader = (rand() % 2 == 0) ? &shaderBasicOpaque : &shaderBasicTranslucent;
 	}
 
 	t1 = glfwGetTime();

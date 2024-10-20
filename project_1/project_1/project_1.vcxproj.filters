@@ -190,16 +190,16 @@
     <None Include="Assets\Shaders\postprocess\inversion.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\quad.frag">
+    <None Include="Assets\Shaders\postprocess\none.frag">
       <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
-    <None Include="Assets\Shaders\quad.vert">
+    <None Include="Assets\Shaders\engine\quad.vert">
       <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
     <None Include="Assets\Shaders\postprocess\grayscale.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\skybox.frag">
+    <None Include="Assets\Shaders\skybox\gradient_01.frag">
       <Filter>Resource Files\Shaders\Engine</Filter>
     </None>
     <None Include="Assets\Shaders\postprocess\blur.frag">
@@ -229,10 +229,10 @@
     <None Include="Assets\Shaders\debug\debug_uv.vert">
       <Filter>Resource Files\Shaders\Debug Shaders</Filter>
     </None>
-    <None Include="Assets\Shaders\ghosted.frag">
+    <None Include="Assets\Shaders\engine\ghosted.frag">
       <Filter>Resource Files\Shaders\Debug Shaders</Filter>
     </None>
-    <None Include="Assets\Shaders\ghosted.vert">
+    <None Include="Assets\Shaders\engine\ghosted.vert">
       <Filter>Resource Files\Shaders\Debug Shaders</Filter>
     </None>
   </ItemGroup>

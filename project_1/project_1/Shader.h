@@ -35,6 +35,7 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath, std::string name);
 	// This constructor assumes that both shaders are in "Shaders/" with the same name
 	Shader(std::string shaderName, std::string name);
+	Shader(std::string vertexPath, std::string fragmentPath, std::string name);
 	//Disable copy constructor and disable assignment operator
 	//	This prevents shallow copying, which can mean multiple Shader objects share ID.
 	//	That would be bad news.
