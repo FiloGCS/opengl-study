@@ -224,10 +224,10 @@
     <None Include="Assets\Shaders\postprocess\Blur.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\postprocess\Kernel.frag">
+    <None Include="Assets\Shaders\postprocess\Edges.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
-    <None Include="Assets\Shaders\postprocess\Edges.frag">
+    <None Include="Assets\Shaders\postprocess\Sharpen.frag">
       <Filter>Resource Files\Shaders\postprocess</Filter>
     </None>
   </ItemGroup>

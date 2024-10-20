@@ -216,12 +216,16 @@ int main() {
 	//Postprocess shaders
 	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "No effects");
 	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Blur.frag", "Blur");
-	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Edges.frag", "Edges");
-	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Grayscale");
+	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Sharpen.frag", "Sharpen");
+	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Edges.frag", "Edges");
+	Shader postprocessShader5 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Grayscale");
+	Shader postprocessShader6 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/inversion.frag", "Invert");
 	loadedPostprocessShaders.push_back(&postprocessShader1);
 	loadedPostprocessShaders.push_back(&postprocessShader2);
 	loadedPostprocessShaders.push_back(&postprocessShader3);
 	loadedPostprocessShaders.push_back(&postprocessShader4);
+	loadedPostprocessShaders.push_back(&postprocessShader5);
+	loadedPostprocessShaders.push_back(&postprocessShader6);
 	//Skybox shaders
 	Shader skyboxShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/skybox.frag", "Skybox Shader");
 	double t1 = glfwGetTime();
