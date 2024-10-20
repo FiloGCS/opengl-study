@@ -75,13 +75,13 @@ unsigned int frameHistoryMaxSize = 180;
 
 std::vector<Shader*> loadedShaders;
 static int selectedShader = 0;
+std::vector<Shader*> loadedPostprocessShaders;
+static int selectedPostprocessShader = 0;
 int selectedEntity = 0;
 bool onlyDrawSelectedEntity = false;
 //Input - Mouse
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
-
-int main();
 
 //FUNCTION PROTOTYPES-----------------------
 void processInput(GLFWwindow* window, Camera* camera);
@@ -198,18 +198,31 @@ int main() {
 	//COMPILING SHADERS...
 	double t0 = glfwGetTime();
 	cout << "Compiling shaders...\t";
-	Shader shader1 = Shader("default", "Entity Shader");
-	loadedShaders.push_back(&shader1);
-	Shader shader4 = Shader("default_Flat", "Flat Shading");
-	loadedShaders.push_back(&shader4);
+	//Default shaders
+	Shader shaderBasicOpaque = Shader("default", "Entity Shader");
+	Shader shaderBasicTranslucent = Shader("basic_translucent", "Basic Translucent");
+	shaderBasicTranslucent.blendMode = Translucent;
+	//Debug Shaders
+	//TODO - should redo the system, having the default in loadedShaders[0] doesn't make much sense...
 	Shader shader2 = Shader("default_UV", "UV");
-	loadedShaders.push_back(&shader2);
 	Shader shader3 = Shader("default_Normal", "World Normal");
+	Shader shader4 = Shader("default_Flat", "Flat Shading");
+	loadedShaders.push_back(&shaderBasicOpaque);
+	loadedShaders.push_back(&shader2);
 	loadedShaders.push_back(&shader3);
-	Shader basic_translucent = Shader("basic_translucent", "Basic Translucent");
-	basic_translucent.blendMode = Translucent;
+	loadedShaders.push_back(&shader4);
+	//Ghosted shader
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
-	Shader postprocessShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "Postprocess Shader");
+	//Postprocess shaders
+	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "No effects");
+	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Blur.frag", "Blur");
+	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Edges.frag", "Edges");
+	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/grayscale.frag", "Grayscale");
+	loadedPostprocessShaders.push_back(&postprocessShader1);
+	loadedPostprocessShaders.push_back(&postprocessShader2);
+	loadedPostprocessShaders.push_back(&postprocessShader3);
+	loadedPostprocessShaders.push_back(&postprocessShader4);
+	//Skybox shaders
 	Shader skyboxShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/skybox.frag", "Skybox Shader");
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
@@ -231,10 +244,10 @@ int main() {
 		entities.emplace_back();
 		//Choose between opaque or translucent shader at random
 		if (rand() % 2 == 0) {
-			entities.back().shader = loadedShaders[0];
+			entities.back().shader = &shaderBasicOpaque;
 		}
 		else {
-			entities.back().shader = &basic_translucent;
+			entities.back().shader = &shaderBasicTranslucent;
 		}
 		entities.back().model = &defaultModel;
 	}
@@ -348,7 +361,7 @@ int main() {
 		for (int i = 0; i < entities.size(); i++) {
 			//If any debug setting is overrading the material...
 			if (entities[i].isVisible) {
-				if (onlyDrawSelectedEntity && i != selectedEntity) {
+				if (onlyDrawSelectedEntity && entities[i].ID != selectedEntity) {
 					opaqueEntities.push_back(&entities[i]);
 				}
 				else {
@@ -377,6 +390,8 @@ int main() {
 		//RENDER SKYBOX
 		//Use our quad shader
 		skyboxShader.use();
+		skyboxShader.setVector2("resolution", window_width, window_height);
+		skyboxShader.setFloat("time", glfwGetTime());
 		//Use our wuad VAO
 		glBindVertexArray(quadVAO);
 		glDisable(GL_DEPTH_TEST); //We don't want the screen quad to depth test
@@ -384,7 +399,7 @@ int main() {
 		//glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //We can use texture attachment in our shader :)
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDepthMask(GL_TRUE);
-
+		glEnable(GL_DEPTH_TEST);
 
 		//RENDER OPAQUE
 		if (use_opaque_pass) {
@@ -404,12 +419,13 @@ int main() {
 		//END RENDER ---------------------------
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0) * 1000;
 
-		//BIND DEFAULT FRAMEBUFFER
+		//RENDER POSTPROCESS
+		//Bind default framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(1, 1, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		//Use our quad shader
-		postprocessShader.use();
+		loadedPostprocessShaders[selectedPostprocessShader]->use();
 		//Use our wuad VAO
 		glBindVertexArray(quadVAO);
 		glDisable(GL_DEPTH_TEST); //We don't want the screen quad to depth test
@@ -501,7 +517,8 @@ void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 pro
 	//Render a vector of entities
 	Shader* sh;
 	for (int i = 0; i < entities.size(); ++i) {
-		if (onlyDrawSelectedEntity && selectedEntity != i) {
+		//TODO - Should use entity ID instead of just i, since reordering the list messes this up
+		if (onlyDrawSelectedEntity && selectedEntity != entities[i]->ID) {
 			//Use ghost shader
 			sh = ghostShader;
 		}
@@ -579,23 +596,7 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	ImGui::SeparatorText("Render passes");
 	ImGui::Checkbox("Opaque pass", &use_opaque_pass);
 	ImGui::Checkbox("Translucent pass", &use_translucent_pass);
-	ImGui::SeparatorText("Shader Picker");
-	//Current Shader info
-	std::ostringstream oss;
-	GLint binaryLength;
-	glGetProgramiv(loadedShaders.at(selectedShader)->ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-	oss << "(" << binaryLength << " bytes) - " << loadedShaders.at(selectedShader)->name;
-	ImGui::Text(oss.str().c_str());
-
-	int buttons_per_line = 3;
-	for (int i = 0; i < loadedShaders.size(); i++) {
-		ImGui::RadioButton(loadedShaders.at(i)->name.c_str(), &selectedShader, i);
-		bool same_line = (i + 1) % buttons_per_line != 0
-			&& (i + 1) < loadedShaders.size();
-		if (same_line) {
-			ImGui::SameLine();
-		}
-	}
+	
 	//ImGui::InputInt(loadedShaders.at(selectedShader%loadedShaders.size())->name.c_str(), &selectedShader);
 	//selectedShader = selectedShader % loadedShaders.size();
 	ImGui::SeparatorText("Environment");
@@ -613,6 +614,24 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
+	}
+	//Postprocessing 
+	ImGui::SeparatorText("Postprocessing");
+	std::ostringstream oss;
+	//Current Shader info
+	GLint binaryLength;
+	glGetProgramiv(loadedPostprocessShaders.at(selectedPostprocessShader)->ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+	oss << "(" << binaryLength << " bytes) - " << loadedPostprocessShaders.at(selectedPostprocessShader)->name;
+	ImGui::Text(oss.str().c_str());
+
+	int buttons_per_line = 3;
+	for (int i = 0; i < loadedPostprocessShaders.size(); i++) {
+		ImGui::RadioButton(loadedPostprocessShaders.at(i)->name.c_str(), &selectedPostprocessShader, i);
+		bool same_line = (i + 1) % buttons_per_line != 0
+			&& (i + 1) < loadedPostprocessShaders.size();
+		if (same_line) {
+			ImGui::SameLine();
+		}
 	}
 	ImGui::End();
 }
@@ -653,6 +672,22 @@ void drawImGuiWindow_modelInfo(Entity* e) {
 	ImGui::Text(oss.str().c_str());
 	oss.str("");
 	oss.clear();
+	ImGui::SeparatorText("Shader Picker");
+	//Current Shader info
+	GLint binaryLength;
+	glGetProgramiv(loadedShaders.at(selectedShader)->ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+	oss << "(" << binaryLength << " bytes) - " << loadedShaders.at(selectedShader)->name;
+	ImGui::Text(oss.str().c_str());
+
+	int buttons_per_line = 3;
+	for (int i = 0; i < loadedShaders.size(); i++) {
+		ImGui::RadioButton(loadedShaders.at(i)->name.c_str(), &selectedShader, i);
+		bool same_line = (i + 1) % buttons_per_line != 0
+			&& (i + 1) < loadedShaders.size();
+		if (same_line) {
+			ImGui::SameLine();
+		}
+	}
 	ImGui::End();
 }
 void drawImGuiWindow_cameraInfo(Camera* cam) {

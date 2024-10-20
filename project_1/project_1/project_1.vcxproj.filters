@@ -221,6 +221,15 @@
     <None Include="Assets\Shaders\skybox.frag">
       <Filter>Resource Files\Shaders\engine</Filter>
     </None>
+    <None Include="Assets\Shaders\postprocess\Blur.frag">
+      <Filter>Resource Files\Shaders\postprocess</Filter>
+    </None>
+    <None Include="Assets\Shaders\postprocess\Kernel.frag">
+      <Filter>Resource Files\Shaders\postprocess</Filter>
+    </None>
+    <None Include="Assets\Shaders\postprocess\Edges.frag">
+      <Filter>Resource Files\Shaders\postprocess</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\T_Noise_03a.png">

@@ -19,6 +19,8 @@
 class Entity {
 
 public:
+	unsigned int ID;
+	static unsigned int nextID;
 	string name;
 
 	glm::vec3 position;

@@ -189,6 +189,9 @@
     <None Include="Assets\Shaders\default_UV.vert" />
     <None Include="Assets\Shaders\ghosted.frag" />
     <None Include="Assets\Shaders\ghosted.vert" />
+    <None Include="Assets\Shaders\postprocess\Blur.frag" />
+    <None Include="Assets\Shaders\postprocess\Edges.frag" />
+    <None Include="Assets\Shaders\postprocess\Kernel.frag" />
     <None Include="Assets\Shaders\postprocess\grayscale.frag" />
     <None Include="Assets\Shaders\postprocess\inversion.frag" />
     <None Include="Assets\Shaders\quad.frag" />

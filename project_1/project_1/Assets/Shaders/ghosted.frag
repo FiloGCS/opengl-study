@@ -24,15 +24,19 @@ uniform float point1_falloff;
 out vec4 FragColor;
 
 
-float rand(vec2 co){
-    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+const float PHI = 1.61803398874989484820459; // Golden ratio
+float gold_noise(in vec2 xy, in float seed){
+       return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
 }
 
 void main(){
 	//Dithering to grey out this entity
-	if(int(gl_FragCoord.x + gl_FragCoord.y) % 3 != 0){
+	if(int(gl_FragCoord.x + sin(gl_FragCoord.y/10)*4) % 3 < 2){
 		discard;
 	}
+//	if(gold_noise(gl_FragCoord.xy,time)>0.1f){
+//		discard;
+//	}
 
 	vec3 lightdir = point1_position - position;
 	lightdir = normalize(lightdir);

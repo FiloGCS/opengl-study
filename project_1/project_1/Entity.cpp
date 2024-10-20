@@ -1,6 +1,10 @@
 #include "Entity.h"
 #include <GLFW/glfw3.h>
+
+unsigned int Entity::nextID;
+
 Entity::Entity(){
+	ID = nextID++;
 	//Default transform values
 	position = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
