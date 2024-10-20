@@ -199,7 +199,7 @@ int main() {
 	double t0 = glfwGetTime();
 	cout << "Compiling shaders...\t";
 	//Default shaders
-	Shader shaderBasicOpaque = Shader("default", "Entity Shader");
+	Shader shaderBasicOpaque = Shader("basic_opaque", "Entity Shader");
 	Shader shaderBasicTranslucent = Shader("basic_translucent", "Basic Translucent");
 	shaderBasicTranslucent.blendMode = Translucent;
 	//Debug Shaders
@@ -214,7 +214,7 @@ int main() {
 	//Ghosted shader
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
 	//Postprocess shaders
-	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "No effects");
+	Shader postprocessShader1 = Shader("Assets/Shaders/quad.vert","Assets/Shaders/quad.frag", "No effects");
 	Shader postprocessShader2 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Blur.frag", "Blur");
 	Shader postprocessShader3 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Sharpen.frag", "Sharpen");
 	Shader postprocessShader4 = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/postprocess/Edges.frag", "Edges");
@@ -227,7 +227,11 @@ int main() {
 	loadedPostprocessShaders.push_back(&postprocessShader5);
 	loadedPostprocessShaders.push_back(&postprocessShader6);
 	//Skybox shaders
-	Shader skyboxShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/skybox.frag", "Skybox Shader");
+	Shader skyboxShader = Shader(
+		"Assets/Shaders/quad.vert",
+		"Assets/Shaders/skybox.frag",
+		"Skybox Shader"
+	);
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -257,7 +261,11 @@ int main() {
 	}
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].scale *= default_size;
-		glm::vec3 randomOffset = glm::vec3(rand() % 100 * 0.01f - 0.5f, rand() % 100 * 0.01f - 0.5f, rand() % 100 * 0.01f - 0.5f);
+		glm::vec3 randomOffset = glm::vec3(
+			rand() % 100 * 0.01f - 0.5f,
+			rand() % 100 * 0.01f - 0.5f,
+			rand() % 100 * 0.01f - 0.5f
+		);
 		entities[i].position += randomOffset;
 	}
 
@@ -273,8 +281,9 @@ int main() {
 	Light point1 = Light(point1_position, "point1");
 	lights.push_back(point1);
 
+	//SKYBOX CUBEMAP
 
-	//FRAMEBUFFER TEST
+	//FRAMEBUFFER SETUP
 	//Creating framebuffer object
 	unsigned int framebuffer;
 	glGenFramebuffers(1, &framebuffer);
@@ -305,7 +314,7 @@ int main() {
 	//Unbind the framebuffer, we don't want to accidentally render to it
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	/// START RENDER LOOP
+	///RENDER LOOP ================================================
 	while (!glfwWindowShouldClose(window)) {
 
 		//HACK ENABLE VSYNC in the loop for debug purposes
@@ -518,6 +527,34 @@ void processInput(GLFWwindow* window, Camera* cam) {
 	}
 	//camera_move_direction = glm::normalize(camera_move_direction);
 	cam->position += camera_move_direction * deltaTime;
+}
+//Cubemaps
+unsigned int loadCubemap(vector<std::string> faces) {
+
+	//Creating the cubemap texture
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	//
+	int width, height, nrChannels;
+	unsigned char* data;
+	vector<int*> textures_faces = vector<int*>();
+	//For each of the faces in the vector
+	for (unsigned int i = 0; i < textures_faces.size(); ++i) {
+		//Load the i-th texture string and use it to load data using stbi_load
+		data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+		//Define a texture image using the data and the extracted values
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+			0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+		);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+	return -1;
 }
 //Render functions
 void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view) {

@@ -179,8 +179,8 @@
     <None Include="Assets\Shaders\101_Xor.vert" />
     <None Include="Assets\Shaders\basic_translucent.frag" />
     <None Include="Assets\Shaders\basic_translucent.vert" />
-    <None Include="Assets\Shaders\default.frag" />
-    <None Include="Assets\Shaders\default.vert" />
+    <None Include="Assets\Shaders\basic_opaque.frag" />
+    <None Include="Assets\Shaders\basic_opaque.vert" />
     <None Include="Assets\Shaders\default_Flat.frag" />
     <None Include="Assets\Shaders\default_Flat.vert" />
     <None Include="Assets\Shaders\default_Normal.frag" />

@@ -37,6 +37,9 @@
     <Filter Include="Resource Files\Shaders\postprocess">
       <UniqueIdentifier>{d4e3c4c5-df17-4ddd-a3af-f860e78b63c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\old">
+      <UniqueIdentifier>{0e26347b-c71e-4dac-b5fe-32767a758e21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -170,10 +173,10 @@
     <None Include="Assets\Shaders\tutorial\07_usingProjection.vert">
       <Filter>Resource Files\Shaders\tutorial</Filter>
     </None>
-    <None Include="Assets\Shaders\default.frag">
+    <None Include="Assets\Shaders\basic_opaque.frag">
       <Filter>Resource Files\Shaders\Default Shaders</Filter>
     </None>
-    <None Include="Assets\Shaders\default.vert">
+    <None Include="Assets\Shaders\basic_opaque.vert">
       <Filter>Resource Files\Shaders\Default Shaders</Filter>
     </None>
     <None Include="Assets\Shaders\default_Flat.frag">
