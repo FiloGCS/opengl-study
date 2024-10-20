@@ -193,6 +193,7 @@
     <None Include="Assets\Shaders\postprocess\inversion.frag" />
     <None Include="Assets\Shaders\quad.frag" />
     <None Include="Assets\Shaders\quad.vert" />
+    <None Include="Assets\Shaders\skybox.frag" />
     <None Include="Assets\Shaders\tutorial\01_basic.frag" />
     <None Include="Assets\Shaders\tutorial\01_basic.vert" />
     <None Include="Assets\Shaders\tutorial\02_vertexcolor.frag" />

@@ -14,5 +14,7 @@ public:
 	glm::quat rotation;
 	glm::mat4 GetViewMatrix();
 
+	bool isFocused;
+
 };
 

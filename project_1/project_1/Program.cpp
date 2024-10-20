@@ -87,6 +87,7 @@ int main();
 void processInput(GLFWwindow* window, Camera* camera);
 //callback functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 //Render functions
 void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view);
 //ImGui window functions
@@ -98,6 +99,9 @@ void drawImGuiWindow_cameraInfo(Camera* cam);
 
 //MAIN ----------------------------------------------------------------------------
 int main() {
+
+	//Seed random with time
+	srand(time(NULL));
 
 	//GLFW------------------------------
 	cout << "Initializing GLFW...\t";
@@ -140,6 +144,7 @@ int main() {
 		return -1;
 	}
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	//glfwSetKeyCallback(window, key_callback);
 	cout << " Done!" << endl;
 
 	//HERE WE GO!-----------------------
@@ -176,14 +181,14 @@ int main() {
 	stbi_set_flip_vertically_on_load(true);
 
 	//Setup Camera
-	camera = Camera(glm::vec3(0.0f, 0.0f, -4.0f));
+	camera = Camera(glm::vec3(0.0f, 0.0f, 4.0f));
 
 	//Setup screen quad
 	unsigned int quadVAO, quadVBO;
 	glGenVertexArrays(1, &quadVAO);
 	glGenBuffers(1, &quadVBO);
 	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER,quadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -205,6 +210,7 @@ int main() {
 	basic_translucent.blendMode = Translucent;
 	Shader ghostedShader = Shader("ghosted", "Ghosted");
 	Shader postprocessShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/quad.frag", "Postprocess Shader");
+	Shader skyboxShader = Shader("Assets/Shaders/quad.vert", "Assets/Shaders/skybox.frag", "Skybox Shader");
 	double t1 = glfwGetTime();
 	cout << " done in " << (t1 - t0) * 1000 << " miliseconds!" << endl;
 
@@ -226,14 +232,15 @@ int main() {
 		//Choose between opaque or translucent shader at random
 		if (rand() % 2 == 0) {
 			entities.back().shader = loadedShaders[0];
-		}else {
+		}
+		else {
 			entities.back().shader = &basic_translucent;
 		}
 		entities.back().model = &defaultModel;
 	}
 	for (int i = 0; i < entities.size(); i++) {
 		entities[i].scale *= default_size;
-		glm::vec3 randomOffset = glm::vec3(rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f, rand()%100*0.01f-0.5f);
+		glm::vec3 randomOffset = glm::vec3(rand() % 100 * 0.01f - 0.5f, rand() % 100 * 0.01f - 0.5f, rand() % 100 * 0.01f - 0.5f);
 		entities[i].position += randomOffset;
 	}
 
@@ -319,16 +326,9 @@ int main() {
 		for (Entity& entity : entities) {
 			entity.Update();
 		}
-		currentFrameInfo.updateTime = (glfwGetTime() - tUpdate0)*1000;
+		currentFrameInfo.updateTime = (glfwGetTime() - tUpdate0) * 1000;
 
-		//BIND OUR CUSTOM FRAMEBUFFER
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		//Clear buffer
-		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-
-		//START RENDER ----------------------
+		//START MEASUREMENT ----------------------
 		double tRender0 = glfwGetTime();
 		GLuint queryID;//Preparing OpenGL Query to measure render time
 		glGenQueries(1, &queryID);
@@ -366,6 +366,25 @@ int main() {
 				}
 			}
 		}
+
+		//BIND OUR CUSTOM FRAMEBUFFER
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		//Clear buffer
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+
+		//RENDER SKYBOX
+		//Use our quad shader
+		skyboxShader.use();
+		//Use our wuad VAO
+		glBindVertexArray(quadVAO);
+		glDisable(GL_DEPTH_TEST); //We don't want the screen quad to depth test
+		glDepthMask(GL_FALSE);
+		//glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //We can use texture attachment in our shader :)
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDepthMask(GL_TRUE);
+
 
 		//RENDER OPAQUE
 		if (use_opaque_pass) {
@@ -406,9 +425,9 @@ int main() {
 		}
 
 		//RENDER IMGUI
-		/*if (show_demo_window) {
-			ImGui::ShowDemoWindow(&show_demo_window);
-		}*/
+		//if (show_demo_window) {
+		//	ImGui::ShowDemoWindow(&show_demo_window);
+		//}
 		drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
 		drawImGuiWindow_cameraInfo(&camera);
 		drawImGuiWindow_stats(window);
@@ -437,30 +456,41 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 //Input functions
+//TODO use callbacks?
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_F && action == GLFW_PRESS); {
+		camera.isFocused = !camera.isFocused;
+	}
+}
 void processInput(GLFWwindow* window, Camera* cam) {
 	glm::vec3 camera_move_direction = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera_move_direction += glm::vec3(0, 0, 1);
+		//camera_move_direction += glm::vec3(0, 0, 1);
+		camera_move_direction += glm::normalize(camera.rotation * glm::vec3(0, 0, -1));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera_move_direction += glm::vec3(1, 0, 0);
+		//camera_move_direction += glm::vec3(-1, 0, 0);
+		camera_move_direction += glm::normalize(camera.rotation * glm::vec3(-1, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera_move_direction += glm::vec3(0, 0, -1);
+		//camera_move_direction += glm::vec3(0, 0, -1);
+		camera_move_direction += glm::normalize(camera.rotation * glm::vec3(0, 0, 1));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera_move_direction += glm::vec3(-1, 0, 0);
+		//camera_move_direction += glm::vec3(1, 0, 0);
+		camera_move_direction += glm::normalize(camera.rotation * glm::vec3(1, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		glm::quat rot = glm::angleAxis(glm::radians(-180 * deltaTime), glm::vec3(0, 01, 0));
+		glm::quat rot = glm::angleAxis(glm::radians(-90 * deltaTime), glm::vec3(0, 01, 0));
 		cam->rotation = rot * cam->rotation;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		glm::quat rot = glm::angleAxis(glm::radians(180 * deltaTime), glm::vec3(0, 01, 0));
+		glm::quat rot = glm::angleAxis(glm::radians(90 * deltaTime), glm::vec3(0, 01, 0));
 		cam->rotation = rot * cam->rotation;
 	}
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-		cam->position = glm::vec3(0.0f, 0.0f, -4.0f);
+	if (cam->isFocused) {
+		float length = glm::length(cam->position);
+		cam->position = camera.rotation * glm::vec3(0, 0, length);
 	}
 	//camera_move_direction = glm::normalize(camera_move_direction);
 	cam->position += camera_move_direction * deltaTime;
@@ -513,7 +543,7 @@ void drawImGuiWindow_stats(GLFWwindow* window) {
 
 	std::ostringstream oss;
 	oss.precision(3);
-	oss << "Frame " << frame; 
+	oss << "Frame " << frame;
 	ImGui::Text(oss.str().c_str());
 	if (frameHistory.size() > 0) {
 		oss.str("");
@@ -554,7 +584,7 @@ void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::ve
 	std::ostringstream oss;
 	GLint binaryLength;
 	glGetProgramiv(loadedShaders.at(selectedShader)->ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-	oss << "(" <<binaryLength << " bytes) - " << loadedShaders.at(selectedShader)->name;
+	oss << "(" << binaryLength << " bytes) - " << loadedShaders.at(selectedShader)->name;
 	ImGui::Text(oss.str().c_str());
 
 	int buttons_per_line = 3;
@@ -628,7 +658,7 @@ void drawImGuiWindow_modelInfo(Entity* e) {
 void drawImGuiWindow_cameraInfo(Camera* cam) {
 
 	ImGui::Begin("Camera info");
-
+	ImGui::Checkbox("Locked", &camera.isFocused);
 	ImGui::SeparatorText("Transform");
 	ImGui::InputFloat3("Position", &(cam->position[0]));
 	ImGui::InputFloat4("Rotation", &(cam->rotation[0]));

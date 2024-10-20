@@ -1,7 +1,6 @@
 PENDING:
-	-Add Light objects
-	+Move Rendering into it's own function
-	++++ Add Camera movement
+	-Add some postprocessing shaders and toggle them with a ImGui dropdown
+	-Add Light objects that are used by the shaders
 	+ Try making the HyperDemon double camera effect
 	-Rework the Entity class to work with our new capabilities
 		-Rework how shaders and materials work

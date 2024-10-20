@@ -46,6 +46,8 @@ public:
 	static bool compareEntityByShaderID(const Entity& a, const Entity& b);
 	static bool compareDistanceToPoint(const Entity& a, const Entity& b, glm::vec3 p);
 
+private:
+	glm::vec3 rotSpeed;
 
 };
 

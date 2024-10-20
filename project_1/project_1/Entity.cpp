@@ -14,12 +14,12 @@ Entity::Entity(){
 
 void Entity::Start()
 {
-	
+	rotSpeed = glm::vec3(0.0f, 90.0f, 0.0f);
+	rotSpeed *= (rand() % 100) / 50.0f - 1;
 }
 
 void Entity::Update() {
 	float time = glfwGetTime();
-	glm::vec3 rotSpeed = glm::vec3(0.0f, 45.0f, 0.0f);
 	rotation = glm::quat(glm::radians(time * rotSpeed));
 	//TODO HACK this is just to emulate Update computation
 	//int n = 0;
