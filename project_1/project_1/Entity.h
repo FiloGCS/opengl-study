@@ -44,6 +44,7 @@ public:
 	void setShader(Shader* newShader);
 	static bool compareEntityByZ(const Entity& a, const Entity& b);
 	static bool compareEntityByShaderID(const Entity& a, const Entity& b);
+	static bool compareDistanceToPoint(const Entity& a, const Entity& b, glm::vec3 p);
 
 
 };

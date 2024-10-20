@@ -87,11 +87,14 @@ int main();
 void processInput(GLFWwindow* window, Camera* camera);
 //callback functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+//Render functions
+void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view);
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window);
 void drawImGuiWindow_stats(GLFWwindow* window);
 void drawImGuiWindow_environment(GLFWwindow* window, glm::vec3& ambient, glm::vec3& point1, float& point1_falloff);
 void drawImGuiWindow_modelInfo(Entity* e);
+void drawImGuiWindow_cameraInfo(Camera* cam);
 
 //MAIN ----------------------------------------------------------------------------
 int main() {
@@ -331,81 +334,53 @@ int main() {
 		glGenQueries(1, &queryID);
 		glBeginQuery(GL_TIME_ELAPSED, queryID);
 
-		drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
-
-		//RENDER OPAQUE
-		glDisable(GL_BLEND);
-		if (use_opaque_pass) {
-			for (int i = 0; i < entities.size(); i++) {
-				Entity* entity = &entities.at(i);
-				//Load the material's shader, or the selected debug material
-				Shader* shader;
-				if (!onlyDrawSelectedEntity || selectedEntity == i) {
-					//Load this entity's shader
-					shader = (entity->shader);
-					//If a debug shader is selected, use that one
-					if (selectedShader != 0) {
-						shader = loadedShaders.at(selectedShader);
-					}
+		//RENDER PREPARATIONS
+		//Sort Entities by camera distance
+		glm::vec3 cameraPos = camera.position;
+		std::sort(entities.begin(), entities.end(),
+			[&cameraPos](const Entity& a, const Entity& b) {
+				return Entity::compareDistanceToPoint(a, b, cameraPos);
+			}
+		);
+		//Sort into two different vectors, opaque and translucent
+		vector<Entity*> opaqueEntities = vector<Entity*>();
+		vector<Entity*> translucentEntities = vector<Entity*>();
+		for (int i = 0; i < entities.size(); i++) {
+			//If any debug setting is overrading the material...
+			if (entities[i].isVisible) {
+				if (onlyDrawSelectedEntity && i != selectedEntity) {
+					opaqueEntities.push_back(&entities[i]);
 				}
 				else {
-					//Load the Ghosted shader
-					shader = &ghostedShader;
-				}
-				//If it's an opaque shader, render it
-				if (shader->blendMode == Opaque) {
-					shader->use();
-					//Setting engine uniforms
-					shader->setVector2("resolution", window_width, window_height);
-					shader->setFloat("time", glfwGetTime());
-					//Setting lighting uniforms
-					shader->setVector3("ambient_color", ambient_color);
-					shader->setVector3("point1_position", point1_position);
-					shader->setVector3("point1_color", point1_color);
-					shader->setFloat("point1_falloff", point1_falloff);
-					//Render
-					entity->Render(projection, view, shader);
+					//Add to the respective list
+					switch (entities[i].shader->blendMode) {
+					case Opaque:
+						opaqueEntities.push_back(&entities[i]);
+						break;
+					case Translucent:
+						translucentEntities.push_back(&entities[i]);
+						break;
+					default:
+						break;
+					}
 				}
 			}
+		}
+
+		//RENDER OPAQUE
+		if (use_opaque_pass) {
+			glDisable(GL_BLEND);
+			renderEntities(opaqueEntities, &ghostedShader, projection, view);
 		}
 
 		//RENDER TRANSLUCENT
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthMask(GL_FALSE);
-		//glDepthMask(GL_FALSE);
 		if (use_translucent_pass) {
-			//Sort Entities by camera distance
-			//TODO - Ideally we would only sort translucent entities
-			std::sort(entities.begin(), entities.end(), &Entity::compareEntityByZ);
-
-			//Loop through entities rendering translucent ones
-			for (int i = 0; i < entities.size(); i++) {
-				Entity* entity = &entities.at(i);
-				if (!onlyDrawSelectedEntity || selectedEntity == i) {
-					//Load the material's shader, or the selected debug material
-					Shader* shader = (entity->shader);
-					if (selectedShader != 0) {
-						shader = loadedShaders.at(selectedShader);
-					}
-					//If it's an opaque shader, render it
-					if (shader->blendMode == Translucent) {
-						shader->use();
-						//Setting engine uniforms
-						shader->setVector2("resolution", window_width, window_height);
-						shader->setFloat("time", glfwGetTime());
-						//Setting lighting uniforms
-						shader->setVector3("ambient_color", ambient_color);
-						shader->setVector3("point1_position", point1_position);
-						shader->setVector3("point1_color", point1_color);
-						shader->setFloat("point1_falloff", point1_falloff);
-						//Render
-						entity->Render(projection, view, shader);
-					}
-				}
-			}
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDepthMask(GL_FALSE);
+			renderEntities(translucentEntities, &ghostedShader, projection, view);
+			glDepthMask(GL_TRUE);
 		}
-		glDepthMask(GL_TRUE);
 
 		//END RENDER ---------------------------
 		currentFrameInfo.renderTime = (glfwGetTime() - tRender0) * 1000;
@@ -416,13 +391,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		//Use our quad shader
 		postprocessShader.use();
-		//TODO - We need to have a quadVAO created to be bound here
+		//Use our wuad VAO
 		glBindVertexArray(quadVAO);
 		glDisable(GL_DEPTH_TEST); //We don't want the screen quad to depth test
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //Since this is a texture attachment, we can use it
+		glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //We can use texture attachment in our shader :)
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
 
 		//DEBUG
 		//Save this frame's info
@@ -436,6 +409,8 @@ int main() {
 		/*if (show_demo_window) {
 			ImGui::ShowDemoWindow(&show_demo_window);
 		}*/
+		drawImGuiWindow_modelInfo(&(entities.at(selectedEntity)));
+		drawImGuiWindow_cameraInfo(&camera);
 		drawImGuiWindow_stats(window);
 		drawImGuiWindow_environment(window, ambient_color, point1_color, point1_falloff);
 
@@ -457,45 +432,66 @@ int main() {
 	return 0;
 }
 
+//Callback functions
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
 //Input functions
 void processInput(GLFWwindow* window, Camera* cam) {
 	glm::vec3 camera_move_direction = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		cout << "W" << endl;
 		camera_move_direction += glm::vec3(0, 0, 1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		cout << "A" << endl;
 		camera_move_direction += glm::vec3(1, 0, 0);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		cout << "S" << endl;
 		camera_move_direction += glm::vec3(0, 0, -1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		cout << "D" << endl;
 		camera_move_direction += glm::vec3(-1, 0, 0);
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		cout << "E" << endl;
-		glm::quat rot = glm::angleAxis(glm::radians(180 * deltaTime), glm::vec3(0, 01, 0));
-		cam->rotation = rot * cam->rotation;
-	}
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		cout << "Q" << endl;
 		glm::quat rot = glm::angleAxis(glm::radians(-180 * deltaTime), glm::vec3(0, 01, 0));
 		cam->rotation = rot * cam->rotation;
 	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		glm::quat rot = glm::angleAxis(glm::radians(180 * deltaTime), glm::vec3(0, 01, 0));
+		cam->rotation = rot * cam->rotation;
+	}
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-		cout << "F" << endl;
 		cam->position = glm::vec3(0.0f, 0.0f, -4.0f);
 	}
 	//camera_move_direction = glm::normalize(camera_move_direction);
 	cam->position += camera_move_direction * deltaTime;
 }
-//Callback functions
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
+//Render functions
+void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view) {
+
+	//Render a vector of entities
+	Shader* sh;
+	for (int i = 0; i < entities.size(); ++i) {
+		if (onlyDrawSelectedEntity && selectedEntity != i) {
+			//Use ghost shader
+			sh = ghostShader;
+		}
+		else {
+			//Use the selected shader or the entity's shader if none is selected
+			sh = (selectedShader != 0) ? loadedShaders.at(selectedShader) : entities[i]->shader;
+		}
+		//Use Shader
+		sh->use();
+		//Setting engine uniforms
+		sh->setVector2("resolution", window_width, window_height);
+		sh->setFloat("time", glfwGetTime());
+		//Setting lighting uniforms
+		sh->setVector3("ambient_color", ambient_color);
+		sh->setVector3("point1_position", point1_position);
+		sh->setVector3("point1_color", point1_color);
+		sh->setFloat("point1_falloff", point1_falloff);
+		//Render
+		entities[i]->Render(projection, view, sh);
+	}
 }
 //ImGui window functions
 void drawImGuiWindow_settings(GLFWwindow* window, bool& show_demo_window) {
@@ -627,5 +623,14 @@ void drawImGuiWindow_modelInfo(Entity* e) {
 	ImGui::Text(oss.str().c_str());
 	oss.str("");
 	oss.clear();
+	ImGui::End();
+}
+void drawImGuiWindow_cameraInfo(Camera* cam) {
+
+	ImGui::Begin("Camera info");
+
+	ImGui::SeparatorText("Transform");
+	ImGui::InputFloat3("Position", &(cam->position[0]));
+	ImGui::InputFloat4("Rotation", &(cam->rotation[0]));
 	ImGui::End();
 }

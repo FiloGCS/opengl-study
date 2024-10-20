@@ -86,6 +86,9 @@ void Entity::setShader(Shader* newShader) {
 bool Entity::compareEntityByZ(const Entity& a, const Entity& b) {
 	return a.position.z < b.position.z;
 }
+bool Entity::compareDistanceToPoint(const Entity& a, const Entity& b, glm::vec3 p){
+	return (glm::distance(a.position, p) > glm::distance(b.position, p));
+}
 bool compareEntityByShaderID(const Entity& a, const Entity& b) {
 	//This should sort the entities by shader blendMode and ID;
 	if (a.shader->blendMode != b.shader->blendMode) {

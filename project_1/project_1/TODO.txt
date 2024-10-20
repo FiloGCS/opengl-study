@@ -1,5 +1,6 @@
 PENDING:
 	-Add Light objects
+	+Move Rendering into it's own function
 	++++ Add Camera movement
 	+ Try making the HyperDemon double camera effect
 	-Rework the Entity class to work with our new capabilities
