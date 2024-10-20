@@ -22,7 +22,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Model.h"
-#include "UtilsNumbers.h"
+#include "Utils/UtilsNumbers.h"
 #include "Light.h"
 #include "Camera.h"
 

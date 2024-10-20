@@ -161,7 +161,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture2D.cpp" />
-    <ClCompile Include="UtilsNumbers.cpp" />
+    <ClCompile Include="Utils\UtilsNumbers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -172,7 +172,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture2D.h" />
-    <ClInclude Include="UtilsNumbers.h" />
+    <ClInclude Include="Utils\UtilsNumbers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\101_Xor.frag" />
