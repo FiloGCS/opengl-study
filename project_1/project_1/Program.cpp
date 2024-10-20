@@ -360,13 +360,17 @@ int main() {
 		vector<Entity*> translucentEntities = vector<Entity*>();
 		for (int i = 0; i < entities.size(); i++) {
 			//If any debug setting is overrading the material...
+			//Ghosting/Isolation
 			if (entities[i].isVisible) {
 				if (onlyDrawSelectedEntity && entities[i].ID != selectedEntity) {
 					opaqueEntities.push_back(&entities[i]);
 				}
 				else {
 					//Add to the respective list
-					switch (entities[i].shader->blendMode) {
+					Shader* shaderBeingUsed = (selectedShader != 0)?
+						loadedShaders[selectedShader]:
+						entities[i].shader;
+					switch (shaderBeingUsed->blendMode) {
 					case Opaque:
 						opaqueEntities.push_back(&entities[i]);
 						break;
