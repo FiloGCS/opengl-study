@@ -90,6 +90,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 //Cubemap
 unsigned int loadCubemap(vector<std::string> faces);
+unsigned int loadCubemap(string skyboxName);
 //Render functions
 void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view);
 //ImGui window functions
@@ -295,15 +296,8 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	//Skybox faces paths
-	vector<string> faces{
-		"Assets/Textures/Cubemaps/skybox_01/right.jpg",
-		"Assets/Textures/Cubemaps/skybox_01/left.jpg",
-		"Assets/Textures/Cubemaps/skybox_01/top.jpg",
-		"Assets/Textures/Cubemaps/skybox_01/bottom.jpg",
-		"Assets/Textures/Cubemaps/skybox_01/front.jpg",
-		"Assets/Textures/Cubemaps/skybox_01/back.jpg"
-	};
-	unsigned int skyboxTexture = loadCubemap(faces);
+	string skyboxName = "skybox_01";
+	unsigned int skyboxTexture = loadCubemap(skyboxName);
 
 	//LOADING MODELS
 	char DEFAULT_MODEL_PATH[] = "Assets/Models/cube_smooth/cube_corners.obj";
@@ -643,6 +637,17 @@ unsigned int loadCubemap(vector<std::string> faces) {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	stbi_set_flip_vertically_on_load(true);
 	return textureID;
+}
+unsigned int loadCubemap(string name) {
+	vector<string> faces{
+		"Assets/Textures/Cubemaps/" + name + "/right.jpg",
+		"Assets/Textures/Cubemaps/" + name + "/left.jpg",
+		"Assets/Textures/Cubemaps/" + name + "/top.jpg",
+		"Assets/Textures/Cubemaps/" + name + "/bottom.jpg",
+		"Assets/Textures/Cubemaps/" + name + "/front.jpg",
+		"Assets/Textures/Cubemaps/" + name + "/back.jpg"
+	};
+	return loadCubemap(faces);
 }
 //Render functions
 void renderEntities(vector<Entity*> entities, Shader* ghostShader, glm::mat4 projection, glm::mat4 view) {
